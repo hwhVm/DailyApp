@@ -1,8 +1,10 @@
 package beini.com.dailyapp.ui.component;
 
 import beini.com.dailyapp.ui.fragments.DailyEditFragment;
+import beini.com.dailyapp.ui.fragments.RegisterFragment;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.DailyPresenter;
+import beini.com.dailyapp.ui.presenter.UserPresenter;
 import dagger.Component;
 
 /**
@@ -13,4 +15,8 @@ public interface DailyComponent {
     void inject(DailyEditFragment dailyEditFragment);
 
     void inject(DailyPresenter dailyPresenter);
+
+    void inject(UserPresenter userPresenter);
+
+    void inject(RegisterFragment registerFragment);
 }

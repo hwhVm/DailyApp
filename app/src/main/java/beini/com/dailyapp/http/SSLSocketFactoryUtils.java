@@ -19,7 +19,6 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import beini.com.dailyapp.R;
-import beini.com.dailyapp.util.BLog;
 
 /**
  * 默认信任所有的证书
@@ -132,7 +131,7 @@ public class SSLSocketFactoryUtils {
          * @param authType
          */
         public void checkServerTrusted(X509Certificate[] chain, String authType) {
-            BLog.e("cert: " + chain[0].toString() + ", authType: " + authType);
+//            BLog.e("cert: " + chain[0].toString() + ", authType: " + authType);
         }
 
         /**

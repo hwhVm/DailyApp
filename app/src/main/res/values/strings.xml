@@ -4,4 +4,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="daily_add_successed">add successed</string>
     <string name="daily_add_failed">add failed</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

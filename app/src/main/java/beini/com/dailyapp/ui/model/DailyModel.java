@@ -7,7 +7,6 @@ import org.reactivestreams.Subscriber;
 import java.io.IOException;
 
 import beini.com.dailyapp.constant.NetConstants;
-import beini.com.dailyapp.http.response.BaseResponseJson;
 import beini.com.dailyapp.http.RxNetUtil;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -31,16 +30,17 @@ public class DailyModel {
      * @param subscriber
      * @param scheduler
      */
-    public void insertDaily(@NonNull final String url, @NonNull final Object dailyRequest, @NonNull final Subscriber<BaseResponseJson> subscriber, @NonNull Scheduler scheduler) {
-        Flowable.create(new FlowableOnSubscribe<BaseResponseJson>() {
+    public void insertDaily(@NonNull final String url, @NonNull final Object dailyRequest, @NonNull final Subscriber<Object> subscriber, @NonNull Scheduler scheduler) {
+        Flowable.create(new FlowableOnSubscribe<Object>() {
             @Override
-            public void subscribe(FlowableEmitter<BaseResponseJson> baseResponseJson) {
+            public void subscribe(FlowableEmitter<Object> baseResponseJson) {
                 try {
                     Response baseResponseJsonResponse = RxNetUtil.getSingleton().insertDaily(url, dailyRequest);
+
                     if (baseResponseJsonResponse.body() == null) {
                         baseResponseJson.onError(new Throwable(NetConstants.EXCTPTION_RESPONSE_NULL));
                     } else {
-                        baseResponseJson.onNext((BaseResponseJson) baseResponseJsonResponse.body());
+                        baseResponseJson.onNext(baseResponseJsonResponse.body());
                         baseResponseJson.onComplete();
                     }
                 } catch (IOException e) {

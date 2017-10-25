@@ -32,27 +32,30 @@ public class DailyPresenter {
     }
 
     public void insertDaily(DailyBean dailyBean, final DailyEditFragment dailyEditFragment) {
-        dailyModel.insertDaily(NetConstants.URL_ADD_DAILY, dailyBean, new Subscriber<BaseResponseJson>() {
+        dailyModel.insertDaily(NetConstants.URL_ADD_DAILY, dailyBean, new Subscriber<Object>() {
             @Override
             public void onSubscribe(Subscription s) {
                 s.request(Integer.MAX_VALUE);
             }
 
             @Override
-            public void onNext(BaseResponseJson baseResponseJson) {
-                dailyEditFragment.onUIShow((baseResponseJson.getReturnCode() == 0));
-
+            public void onNext(Object object) {
+                BaseResponseJson baseResponseJson1 = (BaseResponseJson) object;
+                dailyEditFragment.onUIShow((baseResponseJson1.getReturnCode() == 0));
             }
 
             @Override
             public void onError(Throwable t) {
-                BLog.e("   t=="+t);
+                BLog.e("   t==" + t);
                 dailyEditFragment.onUIShow(false);
             }
 
             @Override
             public void onComplete() {
+
             }
         }, AndroidSchedulers.mainThread());
+
+
     }
 }

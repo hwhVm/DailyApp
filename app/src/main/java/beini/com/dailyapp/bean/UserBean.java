@@ -10,6 +10,17 @@ public class UserBean {
     private String email;
     private int sex;
 
+    @Override
+    public String toString() {
+        return "UserBean{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", sex=" + sex +
+                '}';
+    }
+
     public long getId() {
         return id;
     }
