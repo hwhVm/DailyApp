@@ -50,10 +50,9 @@ public class RxNetUtil {
 //                                }
 //                            }).setLevel(HttpLoggingInterceptor.Level.BASIC))
                             .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
-//                          .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(), SSLSocketFactoryUtils.createTrustAllManager())//信任所有证书
-//                          .sslSocketFactory(SSLSocketFactoryRightUtils.createSSLSocketFactory(GlobalApplication.getInstance().getApplicationContext()), SSLSocketFactoryRightUtils.createTrustAllManager())
-                            .sslSocketFactory(SSLSocketFactoryRightUtils.createSSLSocketFactory(GlobalApplication.getInstance().getApplicationContext())
-                                    , SSLSocketFactoryRightUtils.createTrustAllManager())
+//                            .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(), SSLSocketFactoryUtils.createTrustAllManager())//信任所有证书
+                            .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(GlobalApplication.getInstance().getApplicationContext())
+                                    , SSLSocketFactoryUtils.createTrustAllManager())
                             .hostnameVerifier(new SSLSocketFactoryUtils.TrustAllHostnameVerifier())
                             .build();
                     retrofit = new Retrofit.Builder()
