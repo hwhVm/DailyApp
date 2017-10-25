@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">DailyApp</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="daily_add_successed">add successed</string>
+    <string name="daily_add_failed">add failed</string>
+</resources>
