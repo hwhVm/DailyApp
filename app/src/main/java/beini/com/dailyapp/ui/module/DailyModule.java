@@ -1,6 +1,6 @@
 package beini.com.dailyapp.ui.module;
 
-import beini.com.dailyapp.ui.model.DailyModel;
+import beini.com.dailyapp.ui.model.RequestModel;
 import beini.com.dailyapp.ui.presenter.DailyPresenter;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
 import dagger.Module;
@@ -18,8 +18,8 @@ public class DailyModule {
     }
 
     @Provides
-    public DailyModel returnDailyModel() {
-        return new DailyModel();
+    public RequestModel returnDailyModel() {
+        return new RequestModel();
     }
 
     @Provides

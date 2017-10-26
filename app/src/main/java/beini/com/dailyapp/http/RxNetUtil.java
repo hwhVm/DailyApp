@@ -2,13 +2,13 @@ package beini.com.dailyapp.http;
 
 import android.support.annotation.NonNull;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.constant.NetConstants;
+import io.reactivex.Flowable;
 import okhttp3.OkHttpClient;
-import retrofit2.Response;
+import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -61,6 +61,7 @@ public class RxNetUtil {
                             .addConverterFactory(GsonConverterFactory.create())//compile 'com.squareup.retrofit2:converter-gson:2.0.2'
                             // 添加Retrofit到RxJava的转换器
                             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+//                          .addConverterFactory(ScalarsConverterFactory.create())//普通类型
                             .build();
 
                     rxReServer = retrofit.create(RxReServer.class);
@@ -70,19 +71,14 @@ public class RxNetUtil {
         return instance;
     }
 
-
     /**
-     * 通用post方法
-     *
+     * 通用方法
      * @param url
-     * @param dailyRequest
+     * @param object
      * @return
-     * @throws IOException
+     * @throws InterruptedException
      */
-
-    public Response insertDaily(@NonNull final String url, @NonNull final Object dailyRequest) throws IOException {
-        Response baseResponseJsonResponse = rxReServer.insertRequest(url, dailyRequest).execute();
-        return baseResponseJsonResponse;
+    public Flowable<ResponseBody> sendRequest(@NonNull final String url, @NonNull final Object object) throws InterruptedException {
+        return rxReServer.sendRequestReturnResponseBody(url, object);
     }
-
 }

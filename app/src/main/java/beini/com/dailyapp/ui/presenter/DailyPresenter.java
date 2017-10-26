@@ -1,20 +1,17 @@
 package beini.com.dailyapp.ui.presenter;
 
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
 import javax.inject.Inject;
 
 import beini.com.dailyapp.bean.DailyBean;
 import beini.com.dailyapp.constant.NetConstants;
-import beini.com.dailyapp.http.response.BaseResponseJson;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.fragments.DailyEditFragment;
-import beini.com.dailyapp.ui.model.DailyModel;
+import beini.com.dailyapp.ui.model.RequestModel;
 import beini.com.dailyapp.ui.module.DailyModule;
-import beini.com.dailyapp.util.BLog;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import okhttp3.ResponseBody;
 
 /**
  * Created by beini on 2017/10/19.
@@ -23,7 +20,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 public class DailyPresenter {
 
     @Inject
-    DailyModel dailyModel;
+    RequestModel requestModel;
 
     @Inject
     public DailyPresenter() {
@@ -32,30 +29,12 @@ public class DailyPresenter {
     }
 
     public void insertDaily(DailyBean dailyBean, final DailyEditFragment dailyEditFragment) {
-        dailyModel.insertDaily(NetConstants.URL_ADD_DAILY, dailyBean, new Subscriber<Object>() {
+        requestModel.sendRequest(NetConstants.URL_ADD_DAILY, dailyBean, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
             @Override
-            public void onSubscribe(Subscription s) {
-                s.request(Integer.MAX_VALUE);
-            }
-
-            @Override
-            public void onNext(Object object) {
-                BaseResponseJson baseResponseJson1 = (BaseResponseJson) object;
-                dailyEditFragment.onUIShow((baseResponseJson1.getReturnCode() == 0));
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                BLog.e("   t==" + t);
-                dailyEditFragment.onUIShow(false);
-            }
-
-            @Override
-            public void onComplete() {
+            public void accept(ResponseBody responseBody) throws Exception {
 
             }
-        }, AndroidSchedulers.mainThread());
-
+        });
 
     }
 }

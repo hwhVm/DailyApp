@@ -1,6 +1,9 @@
 package beini.com.dailyapp.http;
 
-import retrofit2.Call;
+import android.support.annotation.NonNull;
+
+import io.reactivex.Flowable;
+import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -12,7 +15,8 @@ import retrofit2.http.Path;
 public interface RxReServer {
 
     @POST("{url}")
-    Call<Object> insertRequest(@Path("url") String url, @Body Object baseRequestJson);
+    @NonNull
+    Flowable<ResponseBody> sendRequestReturnResponseBody(@Path("url") String url, @Body Object baseRequestJson);
 
 
 }

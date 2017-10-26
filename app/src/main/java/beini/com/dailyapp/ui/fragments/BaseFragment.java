@@ -1,6 +1,7 @@
 package beini.com.dailyapp.ui.fragments;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -8,12 +9,25 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import beini.com.dailyapp.bind.ViewInjectorImpl;
+import beini.com.dailyapp.ui.BaseActivity;
 
 /**
  * Created by beini on 2017/10/19.
  */
 
 public abstract class BaseFragment extends Fragment {
+    public BaseActivity baseActivity;
+
+    @Override
+    public void onAttach(Context context) {
+        baseActivity = (BaseActivity) context;
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Nullable
     @Override
@@ -28,8 +42,4 @@ public abstract class BaseFragment extends Fragment {
 
     public abstract void initView();
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 }

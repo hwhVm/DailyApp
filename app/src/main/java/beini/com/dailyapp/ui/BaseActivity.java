@@ -36,4 +36,12 @@ public abstract class BaseActivity extends Activity {
             FragmentUtil.addFragment(customerFragmentManager, baseFragment);
         }
     }
+
+    public void remove(Fragment fragment) {
+        FragmentUtil.removeFragment(fragment);
+    }
+
+    public void back() {
+//        FragmentUtil.removePreFragment(this);
+    }
 }
