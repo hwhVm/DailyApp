@@ -70,6 +70,12 @@ public class RegisterFragment extends BaseFragment {
                 break;
             case R.id.btn_mutil_upload:
                 List<File> files = new ArrayList<>();
+                String path1 = Environment.getExternalStorageDirectory() + File.separator + "aa.xml";
+                File file1 = new File(path1);
+                String path2 = Environment.getExternalStorageDirectory() + File.separator + "bb.ver";
+                File file2 = new File(path2);
+                files.add(file1);
+                files.add(file2);
                 userPresenter.uploadMultiFile(files, this);
                 break;
         }
