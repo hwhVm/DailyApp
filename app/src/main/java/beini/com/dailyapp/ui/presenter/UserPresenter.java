@@ -1,5 +1,8 @@
 package beini.com.dailyapp.ui.presenter;
 
+import java.io.File;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import beini.com.dailyapp.bean.UserBean;
@@ -48,5 +51,24 @@ public class UserPresenter {
             }
         });
 
+    }
+
+    public void uploadSingleFile(File file, final RegisterFragment registerFragment) {
+        dailyModel.uploadSingleFile(NetConstants.URL_UPLOAD_SINGLE_FILE, file, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
+            @Override
+            public void accept(ResponseBody responseBody) throws Exception {
+
+            }
+        });
+    }
+
+    public void uploadMultiFile(List<File> files, final RegisterFragment registerFragment) {
+
+        dailyModel.uploadMultiFile(NetConstants.URL_UPLOAD_MULTI_FILE, files, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
+            @Override
+            public void accept(ResponseBody responseBody) throws Exception {
+
+            }
+        });
     }
 }

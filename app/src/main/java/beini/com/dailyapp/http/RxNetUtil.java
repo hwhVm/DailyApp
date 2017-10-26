@@ -2,12 +2,18 @@ package beini.com.dailyapp.http;
 
 import android.support.annotation.NonNull;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.constant.NetConstants;
 import io.reactivex.Flowable;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -73,12 +79,44 @@ public class RxNetUtil {
 
     /**
      * 通用方法
+     *
      * @param url
      * @param object
      * @return
      * @throws InterruptedException
      */
-    public Flowable<ResponseBody> sendRequest(@NonNull final String url, @NonNull final Object object) throws InterruptedException {
+    public Flowable<ResponseBody> sendRequest(@NonNull final String url, @NonNull final Object object) {
         return rxReServer.sendRequestReturnResponseBody(url, object);
+    }
+
+    public Flowable<ResponseBody> uploadFileSingle(@NonNull final String url, @NonNull File file) {
+        // create RequestBody instance from file
+        RequestBody requestFile =
+                RequestBody.create(MediaType.parse("multipart/form-data"), file);
+
+        // MultipartBody.Part is used to send also the actual file name
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+
+        // add another part within the multipart request
+//        String descriptionString = "hello, this is description speaking";
+//        RequestBody description =
+//                RequestBody.create(
+//                        MediaType.parse("multipart/form-data"), descriptionString);
+
+        // finally, execute the request
+
+        return rxReServer.uploadSingleFile(url, body);
+    }
+
+    public Flowable<ResponseBody> uploadMultiFile(String url, List<File> fileList) {
+
+        List<MultipartBody.Part> parts = new ArrayList<>(fileList.size());
+        for (File file : fileList) {
+            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+            MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+            parts.add(part);
+        }
+        return rxReServer.uploadMultiFile(url, parts);
     }
 }

@@ -10,6 +10,8 @@ public class NetConstants {
     public static String URL_ADD_DAILY = "addDaily";
     public static String URL_REGISTER_USER = "register";
     public static String URL_LOGIN_USER = "login";
+    public static String URL_UPLOAD_SINGLE_FILE = "upload";
+    public static String URL_UPLOAD_MULTI_FILE = "multipart_upload";
     //exception
     public static String EXCTPTION_RESPONSE_NULL = "EXCTPTION_RESPONSE_NULL";
     public static String EXCTPTION_RESPONSE_IO = "EXCTPTION_RESPONSE_IO";
