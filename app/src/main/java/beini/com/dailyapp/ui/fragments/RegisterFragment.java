@@ -1,12 +1,7 @@
 package beini.com.dailyapp.ui.fragments;
 
 
-import android.os.Environment;
 import android.view.View;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -64,19 +59,11 @@ public class RegisterFragment extends BaseFragment {
                 userPresenter.loginUser(userBeanLogin, this);
                 break;
             case R.id.btn_upload:
-                String path = Environment.getExternalStorageDirectory() + File.separator + "aa.xml";
-                File file = new File(path);
-                userPresenter.uploadSingleFile(file, this);
+                userPresenter.uploadSingleFileProcess(this);
                 break;
             case R.id.btn_mutil_upload:
-                List<File> files = new ArrayList<>();
-                String path1 = Environment.getExternalStorageDirectory() + File.separator + "aa.xml";
-                File file1 = new File(path1);
-                String path2 = Environment.getExternalStorageDirectory() + File.separator + "bb.ver";
-                File file2 = new File(path2);
-                files.add(file1);
-                files.add(file2);
-                userPresenter.uploadMultiFile(files, this);
+                userPresenter.uploadMultiFile(this);
+
                 break;
         }
     }

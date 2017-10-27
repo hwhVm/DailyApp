@@ -3,12 +3,14 @@ package beini.com.dailyapp.ui.presenter;
 import javax.inject.Inject;
 
 import beini.com.dailyapp.bean.DailyBean;
+import beini.com.dailyapp.bean.DailyPageBean;
 import beini.com.dailyapp.constant.NetConstants;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.fragments.DailyEditFragment;
 import beini.com.dailyapp.ui.model.RequestModel;
 import beini.com.dailyapp.ui.module.DailyModule;
+import beini.com.dailyapp.util.BLog;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import okhttp3.ResponseBody;
@@ -35,6 +37,23 @@ public class DailyPresenter {
 
             }
         });
+    }
 
+    public void queryDailyBynum(DailyPageBean pageTableForm) {
+        requestModel.sendRequest(NetConstants.URL_QUERY_DAILY_BY_NUM, pageTableForm, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
+            @Override
+            public void accept(ResponseBody responseBody) throws Exception {
+                BLog.e("       " + responseBody.string());
+            }
+        });
+    }
+
+    public void queryDailyCount() {
+        requestModel.sendRequest(NetConstants.URL_QUERY_DAILY_COUNT, "", AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
+            @Override
+            public void accept(ResponseBody responseBody) throws Exception {
+                BLog.e("       " + responseBody.string());
+            }
+        });
     }
 }

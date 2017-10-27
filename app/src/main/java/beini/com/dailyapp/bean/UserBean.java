@@ -25,39 +25,44 @@ public class UserBean {
         return id;
     }
 
-    public void setId(long id) {
+    public UserBean setId(long id) {
         this.id = id;
+        return this;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public UserBean setUsername(String username) {
         this.username = username;
+        return this;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public UserBean setEmail(String email) {
         this.email = email;
+        return this;
     }
 
     public int getSex() {
         return sex;
     }
 
-    public void setSex(int sex) {
+    public UserBean setSex(int sex) {
         this.sex = sex;
+        return this;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public UserBean setPassword(String password) {
         this.password = password;
+        return this;
     }
 }

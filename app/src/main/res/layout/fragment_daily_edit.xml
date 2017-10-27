@@ -16,4 +16,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="get cer info" />
+
+    <Button
+        android:id="@+id/btn_get_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="get info" />
+
+    <Button
+        android:id="@+id/btn_get_dailyCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" queryDailyCount" />
+
 </LinearLayout>

@@ -17,48 +17,54 @@ public class DailyBean {
         return content;
     }
 
-    public void setContent(String content) {
+    public DailyBean setContent(String content) {
         this.content = content;
+        return this;
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public DailyBean setId(int id) {
         this.id = id;
+        return this;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public DailyBean setTitle(String title) {
         this.title = title;
+        return this;
     }
 
     public String getPicUrl() {
         return picUrl;
     }
 
-    public void setPicUrl(String picUrl) {
+    public DailyBean setPicUrl(String picUrl) {
         this.picUrl = picUrl;
+        return this;
     }
 
     public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public DailyBean setAuthor(String author) {
         this.author = author;
+        return this;
     }
 
     public String getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public DailyBean setDate(String date) {
         this.date = date;
+        return this;
     }
 
 }

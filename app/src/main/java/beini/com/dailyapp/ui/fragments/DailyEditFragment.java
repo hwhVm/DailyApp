@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import beini.com.dailyapp.R;
 import beini.com.dailyapp.bean.DailyBean;
+import beini.com.dailyapp.bean.DailyPageBean;
 import beini.com.dailyapp.bind.ContentView;
 import beini.com.dailyapp.bind.Event;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
@@ -37,7 +38,7 @@ public class DailyEditFragment extends BaseFragment {
         build.inject(this);
     }
 
-    @Event({R.id.btn_test, R.id.btn_get_cer_info})
+    @Event({R.id.btn_test, R.id.btn_get_cer_info, R.id.btn_get_info,R.id.btn_get_dailyCount})
     private void mEvent(View view) {
         switch (view.getId()) {
             case R.id.btn_test:
@@ -50,7 +51,15 @@ public class DailyEditFragment extends BaseFragment {
                     e.printStackTrace();
                 }
                 break;
-
+            case R.id.btn_get_info:
+                DailyPageBean dailyPageBean = new DailyPageBean();
+                dailyPageBean.setBeginIndex(0);
+                dailyPageBean.setPageSize(3);
+                dailyPresenter.queryDailyBynum(dailyPageBean);
+                break;
+            case R.id.btn_get_dailyCount:
+                dailyPresenter.queryDailyCount();
+                break;
         }
     }
 
