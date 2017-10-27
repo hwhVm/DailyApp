@@ -10,6 +10,7 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -60,7 +61,7 @@ public class RequestModel {
 
     public void uploadMultiFileProcess(@NonNull final String url, @NonNull final Scheduler scheduler,
                                        @NonNull FlowableOnSubscribe<List<File>> flowableOnSubscribe, @NonNull final Consumer<ResponseBody> subscriber) {
-        
+
         Flowable.create(flowableOnSubscribe, BackpressureStrategy.BUFFER)
                 .map(new Function<List<File>, Flowable<ResponseBody>>() {
                     @Override
@@ -77,5 +78,15 @@ public class RequestModel {
 
     }
 
+    public void downloadFile(final String url
+            , @NonNull final Function<ResponseBody, Boolean> functionResponse, @NonNull Function<Boolean, Object> booleanObjectFunction) {
+
+        RxNetUtil.getSingleton().downloadFile(url)
+                .map(functionResponse)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(booleanObjectFunction);
+
+    }
 
 }

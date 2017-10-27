@@ -14,7 +14,5 @@ public class NetConstants {
     public static String URL_UPLOAD_MULTI_FILE = "multipart_upload";
     public static String URL_QUERY_DAILY_BY_NUM = "queryDailyByNum";
     public static String URL_QUERY_DAILY_COUNT = "queryDailyCount";
-    //exception
-    public static String EXCTPTION_RESPONSE_NULL = "EXCTPTION_RESPONSE_NULL";
-    public static String EXCTPTION_RESPONSE_IO = "EXCTPTION_RESPONSE_IO";
+    public static String URL_LOGOUT = "logout";
 }

@@ -119,4 +119,9 @@ public class RxNetUtil {
         }
         return rxReServer.uploadMultiFile(url, parts);
     }
+
+    public Flowable<ResponseBody> downloadFile(String url) {
+
+        return rxReServer.downloadFile(url);
+    }
 }
