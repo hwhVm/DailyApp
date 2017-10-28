@@ -9,6 +9,7 @@ import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -50,4 +51,21 @@ public interface RxReServer {
     @Streaming//下载大文件时候使用
     @GET
     Flowable<ResponseBody> downloadFile(@Url String fileUrl);
+
+    /**
+     * 断点下载
+     * 请求文件总大小
+     * 根据机型高低，分配多个线程下载
+     * 记录下载进度，大小，类型等到数据库
+     * 同时更新UI和通知栏，提示用户
+     * 下载结束后更新数据库下载数据，追加组合文件
+     * 判断文件大小，检验文件大小
+     *
+     * @param range
+     * @param url
+     * @return
+     */
+    @GET
+    @Streaming
+    Flowable<ResponseBody> downloadBreakpoint(@Header("RANGE") String range, @Url String url);
 }

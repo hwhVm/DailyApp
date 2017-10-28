@@ -85,7 +85,19 @@ public class RequestModel {
                 .map(functionResponse)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .map(booleanObjectFunction);
+                .map(booleanObjectFunction)
+                .subscribe();
+
+    }
+
+    public void downloadBreakpoint(String rnag, String url
+            , @NonNull final Function<ResponseBody, Boolean> functionResponse, @NonNull Function<Boolean, Object> booleanObjectFunction) {
+        RxNetUtil.getSingleton().downloadBreakpoint(rnag, url)
+                .map(functionResponse)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(booleanObjectFunction)
+                .subscribe();
 
     }
 

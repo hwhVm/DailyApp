@@ -30,4 +30,16 @@
         android:layout_height="wrap_content"
         android:text="mutil upload" />
 
+    <Button
+        android:id="@+id/btn_download"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="download" />
+
+    <Button
+        android:id="@+id/btn_mutil_download"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="mutil download" />
+
 </LinearLayout>

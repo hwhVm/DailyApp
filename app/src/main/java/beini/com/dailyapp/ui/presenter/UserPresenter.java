@@ -16,6 +16,7 @@ import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.fragments.RegisterFragment;
 import beini.com.dailyapp.ui.model.RequestModel;
 import beini.com.dailyapp.ui.module.DailyModule;
+import beini.com.dailyapp.util.BLog;
 import beini.com.dailyapp.util.FileUtil;
 import beini.com.dailyapp.util.GsonUtil;
 import io.reactivex.FlowableEmitter;
@@ -128,9 +129,29 @@ public class UserPresenter {
                 new Function<Boolean, Object>() {
                     @Override
                     public Object apply(Boolean aBoolean) throws Exception {
-                        return null;
+                        BLog.e("  download file success ");
+                        return true;
                     }
                 });
 
+    }
+
+    public void downloadBreakpoint(String url) {
+
+        requestModel.downloadBreakpoint("200", url,
+                new Function<ResponseBody, Boolean>() {
+                    @Override
+                    public Boolean apply(ResponseBody responseBody) throws Exception {
+                        FileUtil.writeBytesToSD(Environment.getExternalStorageDirectory() + "/gg.mp3", responseBody.bytes());
+                        return true;
+                    }
+                },
+                new Function<Boolean, Object>() {
+                    @Override
+                    public Object apply(Boolean aBoolean) throws Exception {
+                        BLog.e("  download break point ");
+                        return true;
+                    }
+                });
     }
 }

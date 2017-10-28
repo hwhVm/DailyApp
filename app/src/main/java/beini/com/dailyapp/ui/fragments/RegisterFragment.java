@@ -39,7 +39,7 @@ public class RegisterFragment extends BaseFragment {
 
     }
 
-    @Event({R.id.btn_register, R.id.btn_login, R.id.btn_upload, R.id.btn_mutil_upload})
+    @Event({R.id.btn_register, R.id.btn_login, R.id.btn_upload, R.id.btn_mutil_upload,R.id.btn_download,R.id.btn_mutil_download})
     private void mEvent(View view) {
         switch (view.getId()) {
             case R.id.btn_register:
@@ -63,8 +63,17 @@ public class RegisterFragment extends BaseFragment {
                 break;
             case R.id.btn_mutil_upload:
                 userPresenter.uploadMultiFile(this);
+                break;
+            case R.id.btn_download:
+                String urlDownLoad = "http://120.76.41.61/source/sound/sleep/Sleep_Bird_Chirping.mp3";
+                userPresenter.downloadFile(urlDownLoad);
 
                 break;
+            case R.id.btn_mutil_download:
+                String urlMutilDownLoad = "http://120.76.41.61/source/sound/sleep/Sleep_Bird_Chirping.mp3";
+                userPresenter.downloadBreakpoint(urlMutilDownLoad);
+                break;
+
         }
     }
 

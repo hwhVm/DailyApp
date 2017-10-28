@@ -124,4 +124,11 @@ public class RxNetUtil {
 
         return rxReServer.downloadFile(url);
     }
+
+    public Flowable<ResponseBody> downloadBreakpoint(String rang, String url) {
+
+        return rxReServer.downloadBreakpoint(rang, url);
+    }
+
+
 }
