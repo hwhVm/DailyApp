@@ -9,6 +9,7 @@ import beini.com.dailyapp.http.RxNetUtil;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;
+import io.reactivex.FlowableSubscriber;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -26,8 +27,17 @@ public class RequestModel {
     /**
      * 统一接口
      */
-    public void sendRequest(@NonNull final String url, @NonNull final Object request, @NonNull Scheduler scheduler, @NonNull final Consumer<ResponseBody> subscriber) {
-        RxNetUtil.getSingleton().sendRequest(url, request).observeOn(scheduler).subscribeOn(Schedulers.io()).subscribe(subscriber);
+    public void sendRequest(@NonNull final String url, @NonNull final Object request, @NonNull Scheduler scheduler, @NonNull final Consumer<ResponseBody> subscriber, Consumer<Throwable> consumer) {
+        RxNetUtil.getSingleton().sendRequest(url, request).observeOn(scheduler).subscribeOn(Schedulers.io()).subscribe(subscriber, consumer);
+    }
+
+    public void sendRequest(@NonNull final String url, @NonNull final Object request, @NonNull Scheduler scheduler, FlowableSubscriber<ResponseBody> flowableSubscriber) {
+        RxNetUtil.getSingleton().
+                sendRequest(url, request).
+                observeOn(scheduler).
+                subscribeOn(Schedulers.io()).
+                subscribe(flowableSubscriber);
+
     }
 
     //

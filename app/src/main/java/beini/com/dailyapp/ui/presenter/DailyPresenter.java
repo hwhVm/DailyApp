@@ -36,6 +36,11 @@ public class DailyPresenter {
             public void accept(ResponseBody responseBody) throws Exception {
 
             }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+
+            }
         });
     }
 
@@ -45,6 +50,11 @@ public class DailyPresenter {
             public void accept(ResponseBody responseBody) throws Exception {
                 BLog.e("       " + responseBody.string());
             }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+
+            }
         });
     }
 
@@ -53,6 +63,11 @@ public class DailyPresenter {
             @Override
             public void accept(ResponseBody responseBody) throws Exception {
                 BLog.e("       " + responseBody.string());
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+
             }
         });
     }

@@ -45,9 +45,35 @@ public class UserPresenter {
         requestModel.sendRequest(NetConstants.URL_REGISTER_USER, userBean, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
             @Override
             public void accept(ResponseBody responseBody) throws Exception {
-
+                BLog.e("  accept    ");
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                BLog.e("   Throwable       " + throwable.getLocalizedMessage());
             }
         });
+//        requestModel.sendRequest(NetConstants.URL_REGISTER_USER, userBean, AndroidSchedulers.mainThread(), new FlowableSubscriber<ResponseBody>() {
+//            @Override
+//            public void onSubscribe(Subscription s) {
+//                s.request(Integer.MAX_VALUE);
+//            }
+//
+//            @Override
+//            public void onNext(ResponseBody responseBody) {
+//                BLog.e(" onNext  responseBody     ");
+//            }
+//
+//            @Override
+//            public void onError(Throwable t) {
+//                BLog.e("           " + t.getLocalizedMessage());
+//            }
+//
+//            @Override
+//            public void onComplete() {
+//                BLog.e(" onComplete  responseBody     ");
+//            }
+//        });
 
     }
 
@@ -56,6 +82,11 @@ public class UserPresenter {
             @Override
             public void accept(ResponseBody responseBody) throws Exception {
                 BaseResponseJson baseResponseJson = (BaseResponseJson) GsonUtil.getGsonUtil().fromJson(responseBody.string(), BaseResponseJson.class);
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+
             }
         });
 
@@ -111,6 +142,11 @@ public class UserPresenter {
         requestModel.sendRequest(NetConstants.URL_LOGOUT, currentUser, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
             @Override
             public void accept(ResponseBody responseBody) throws Exception {
+
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
 
             }
         });
