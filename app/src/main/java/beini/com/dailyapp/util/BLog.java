@@ -8,8 +8,13 @@ import android.util.Log;
 
 public class BLog {
     private static String tag = "com.beini";
+    private static String retrofitLog = "com.retrofit";
 
     public static void e(String string) {
         Log.e(tag, string);
+    }
+
+    public static void h(String string) {
+        Log.d(retrofitLog, string);
     }
 }

@@ -34,12 +34,12 @@ public class DailyPresenter {
         requestModel.sendRequest(NetConstants.URL_ADD_DAILY, dailyBean, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
             @Override
             public void accept(ResponseBody responseBody) throws Exception {
-
+                BLog.e(" accept ");
             }
         }, new Consumer<Throwable>() {
             @Override
             public void accept(Throwable throwable) throws Exception {
-
+                BLog.e("     throwable= " + throwable.getLocalizedMessage());
             }
         });
     }
@@ -53,7 +53,7 @@ public class DailyPresenter {
         }, new Consumer<Throwable>() {
             @Override
             public void accept(Throwable throwable) throws Exception {
-
+                BLog.e("  throwable " + throwable.getLocalizedMessage());
             }
         });
     }

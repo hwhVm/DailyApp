@@ -55,6 +55,7 @@ public class DailyEditFragment extends BaseFragment {
                 DailyPageBean dailyPageBean = new DailyPageBean();
                 dailyPageBean.setBeginIndex(0);
                 dailyPageBean.setPageSize(3);
+                dailyPageBean.setUser_id(8);
                 dailyPresenter.queryDailyBynum(dailyPageBean);
                 break;
             case R.id.btn_get_dailyCount:
@@ -68,6 +69,9 @@ public class DailyEditFragment extends BaseFragment {
         dailyBean.setAuthor("by beini");
         dailyBean.setContent("test content");
         dailyBean.setDate("2017.10.19");
+        dailyBean.setContent("系映射)，说白了就是将面向对象编程语言里的对象与数据库关联起来的一种技术，而greenDao就是实现这种技术之一，所以说greenDao其实就是一种将java object 与SQLite Database关联起来的桥梁，它们之间的关系 如下图所示；");
+        dailyBean.setUser_id(8);
+        dailyBean.setTitle("得了顶顶顶顶顶顶顶顶顶顶");
         return dailyBean;
     }
 

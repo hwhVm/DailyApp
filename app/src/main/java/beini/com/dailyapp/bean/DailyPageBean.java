@@ -13,8 +13,9 @@ public class DailyPageBean {
     private int pageCount;//共多少页
     private int dailyCount;//共多少条记录
     private List<DailyBean> dailyBeans;
+    private int user_id;
 
-    
+
     public int getDailyCount() {
         return dailyCount;
     }
@@ -61,6 +62,14 @@ public class DailyPageBean {
 
     public void setPageCount(int pageCount) {
         this.pageCount = pageCount;
+    }
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
     }
 
 }

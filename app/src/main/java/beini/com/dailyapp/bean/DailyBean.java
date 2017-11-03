@@ -5,66 +5,82 @@ package beini.com.dailyapp.bean;
  */
 public class DailyBean {
 
-    private int id;
+    private int daily_id;
     private String title;
     private String date;
     private String content;
     private String author;
     private String picUrl;
+    private int user_id;
 
+
+    @Override
+    public String toString() {
+        return "DailyBean{" +
+                "id=" + daily_id +
+                ", title='" + title + '\'' +
+                ", date='" + date + '\'' +
+                ", content='" + content + '\'' +
+                ", author='" + author + '\'' +
+                ", picUrl='" + picUrl + '\'' +
+                ", user_id='" + user_id + '\'' +
+                '}';
+    }
+
+    public int getDaily_id() {
+        return daily_id;
+    }
+
+    public void setDaily_id(int daily_id) {
+        this.daily_id = daily_id;
+    }
 
     public String getContent() {
         return content;
     }
 
-    public DailyBean setContent(String content) {
+    public void setContent(String content) {
         this.content = content;
-        return this;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public DailyBean setId(int id) {
-        this.id = id;
-        return this;
-    }
 
     public String getTitle() {
         return title;
     }
 
-    public DailyBean setTitle(String title) {
+    public void setTitle(String title) {
         this.title = title;
-        return this;
     }
 
     public String getPicUrl() {
         return picUrl;
     }
 
-    public DailyBean setPicUrl(String picUrl) {
+    public void setPicUrl(String picUrl) {
         this.picUrl = picUrl;
-        return this;
     }
 
     public String getAuthor() {
         return author;
     }
 
-    public DailyBean setAuthor(String author) {
+    public void setAuthor(String author) {
         this.author = author;
-        return this;
     }
 
     public String getDate() {
         return date;
     }
 
-    public DailyBean setDate(String date) {
+    public void setDate(String date) {
         this.date = date;
-        return this;
     }
 
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
+    }
 }

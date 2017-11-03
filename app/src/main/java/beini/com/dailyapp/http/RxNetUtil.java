@@ -9,12 +9,14 @@ import java.util.concurrent.TimeUnit;
 
 import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.constant.NetConstants;
+import beini.com.dailyapp.util.BLog;
 import io.reactivex.Flowable;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -34,6 +36,14 @@ public class RxNetUtil {
             synchronized (RxNetUtil.class) {
                 if (instance == null) {
                     instance = new RxNetUtil();
+                    HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                        @Override
+                        public void log(String message) {
+                            BLog.h("      http log :  " + message);
+                        }
+                    });
+                    httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);//日志级别,NONE BASIC HEADERS BODY
+
                     OkHttpClient client = new OkHttpClient//添加头信息，cookie等
                             .Builder()
                             // 添加通用的Header
@@ -45,21 +55,12 @@ public class RxNetUtil {
 //                                    return chain.proceed(builder.build());
 //                                }
 //                            })
-                              /*
-              这里可以添加一个HttpLoggingInterceptor，因为Retrofit封装好了从Http请求到解析，
-            出了bug很难找出来问题，添加HttpLoggingInterceptor拦截器方便调试接口
-             */
-//                            .addInterceptor(new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-//                                @Override
-//                                public void log(String message) {
-//
-//                                }
-//                            }).setLevel(HttpLoggingInterceptor.Level.BASIC))
                             .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
-//                            .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(), SSLSocketFactoryUtils.createTrustAllManager())//信任所有证书
+//                          .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(), SSLSocketFactoryUtils.createTrustAllManager())//信任所有证书
                             .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(GlobalApplication.getInstance().getApplicationContext())
                                     , SSLSocketFactoryUtils.createTrustAllManager())
                             .hostnameVerifier(new SSLSocketFactoryUtils.TrustAllHostnameVerifier())
+                            .addInterceptor(httpLoggingInterceptor)
                             .build();
                     retrofit = new Retrofit.Builder()
                             .client(client)

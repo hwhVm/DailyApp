@@ -39,13 +39,13 @@ public class RegisterFragment extends BaseFragment {
 
     }
 
-    @Event({R.id.btn_register, R.id.btn_login, R.id.btn_upload, R.id.btn_mutil_upload,R.id.btn_download,R.id.btn_mutil_download})
+    @Event({R.id.btn_register, R.id.btn_login, R.id.btn_upload, R.id.btn_mutil_upload, R.id.btn_download, R.id.btn_mutil_download})
     private void mEvent(View view) {
         switch (view.getId()) {
             case R.id.btn_register:
                 BLog.e("  btn_register ");
                 UserBean userBean = new UserBean();
-                userBean.setEmail("22@qq.com");
+                userBean.setEmail("33@qq.com");
                 userBean.setPassword("123456");
                 userBean.setSex(1);
                 userBean.setUsername("beini");

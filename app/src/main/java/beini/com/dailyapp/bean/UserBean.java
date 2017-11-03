@@ -1,68 +1,78 @@
 package beini.com.dailyapp.bean;
 
+import java.util.List;
+
 /**
  * Created by beini on 2017/10/19.
  */
 public class UserBean {
-    private long id;
+
+    private int user_id;
     private String username;
     private String password;
     private String email;
     private int sex;
+    private List<DailyBean> stdudents;
 
-    @Override
-    public String toString() {
-        return "UserBean{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", sex=" + sex +
-                '}';
+
+    public List<DailyBean> getStdudents() {
+        return stdudents;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public UserBean setId(long id) {
-        this.id = id;
-        return this;
+    public void setStdudents(List<DailyBean> stdudents) {
+        this.stdudents = stdudents;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public UserBean setUsername(String username) {
+    public void setUsername(String username) {
         this.username = username;
-        return this;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public UserBean setEmail(String email) {
+    public void setEmail(String email) {
         this.email = email;
-        return this;
     }
 
     public int getSex() {
         return sex;
     }
 
-    public UserBean setSex(int sex) {
+
+    public void setSex(int sex) {
         this.sex = sex;
-        return this;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public UserBean setPassword(String password) {
+    public void setPassword(String password) {
         this.password = password;
-        return this;
+    }
+
+
+    public int getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
+    }
+
+    @Override
+    public String toString() {
+        return "UserBean{" +
+                "id=" + user_id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", sex=" + sex +
+                '}';
     }
 }
