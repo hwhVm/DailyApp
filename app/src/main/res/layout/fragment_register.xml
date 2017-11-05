@@ -5,41 +5,58 @@
     android:orientation="vertical"
     tools:context="beini.com.dailyapp.ui.fragments.RegisterFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!--userBean.setEmail("33@qq.com");-->
+    <!--userBean.setPassword("123456");-->
+    <!--userBean.setSex(1);-->
+    <!--userBean.setUsername("beini");-->
+
+    <EditText
+        android:id="@+id/et_re_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:hint="邮     箱（必填）" />
+
+    <EditText
+        android:id="@+id/et_re_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="密     码（必填）" />
+
+    <EditText
+        android:id="@+id/et_re_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="用户名（必填）" />
+
+    <RadioGroup
+        android:id="@+id/rg_sex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="男" />
+
+        <RadioButton
+            android:id="@+id/rb_woman"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="女" />
+    </RadioGroup>
+
     <Button
         android:id="@+id/btn_register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:text="register" />
-
-    <Button
-        android:id="@+id/btn_login"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="login" />
-
-    <Button
-        android:id="@+id/btn_upload"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="upload" />
-
-    <Button
-        android:id="@+id/btn_mutil_upload"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="mutil upload" />
-
-    <Button
-        android:id="@+id/btn_download"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="download" />
-
-    <Button
-        android:id="@+id/btn_mutil_download"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="mutil download" />
 
 </LinearLayout>

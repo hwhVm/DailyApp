@@ -13,6 +13,7 @@ import beini.com.dailyapp.constant.NetConstants;
 import beini.com.dailyapp.http.response.BaseResponseJson;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
+import beini.com.dailyapp.ui.fragments.LoginFragment;
 import beini.com.dailyapp.ui.fragments.RegisterFragment;
 import beini.com.dailyapp.ui.model.RequestModel;
 import beini.com.dailyapp.ui.module.DailyModule;
@@ -77,7 +78,7 @@ public class UserPresenter {
 
     }
 
-    public void loginUser(UserBean userBean, final RegisterFragment registerFragment) {
+    public void loginUser(UserBean userBean, final LoginFragment registerFragment) {
         requestModel.sendRequest(NetConstants.URL_LOGIN_USER, userBean, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
             @Override
             public void accept(ResponseBody responseBody) throws Exception {

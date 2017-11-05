@@ -1,5 +1,6 @@
 package beini.com.dailyapp.ui.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -19,9 +20,9 @@ public abstract class BaseFragment extends Fragment {
     public BaseActivity baseActivity;
 
     @Override
-    public void onAttach(Context context) {
-        baseActivity = (BaseActivity) context;
-        super.onAttach(context);
+    public void onAttach(Activity activity) {
+        baseActivity = (BaseActivity) activity;
+        super.onAttach(activity);
     }
 
     @Override

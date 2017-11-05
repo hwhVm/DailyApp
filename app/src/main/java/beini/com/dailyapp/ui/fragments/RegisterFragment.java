@@ -1,7 +1,12 @@
 package beini.com.dailyapp.ui.fragments;
 
 
+import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import javax.inject.Inject;
 
@@ -9,6 +14,7 @@ import beini.com.dailyapp.R;
 import beini.com.dailyapp.bean.UserBean;
 import beini.com.dailyapp.bind.ContentView;
 import beini.com.dailyapp.bind.Event;
+import beini.com.dailyapp.bind.ViewInject;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.module.DailyModule;
@@ -22,6 +28,16 @@ import beini.com.dailyapp.util.BLog;
 public class RegisterFragment extends BaseFragment {
     @Inject
     UserPresenter userPresenter;
+    @ViewInject(R.id.et_re_email)
+    EditText et_re_email;
+    @ViewInject(R.id.et_re_password)
+    EditText et_re_password;
+    @ViewInject(R.id.et_re_username)
+    EditText et_re_username;
+    @ViewInject(R.id.rb_main)
+    RadioButton rb_main;
+    @ViewInject(R.id.rb_woman)
+    RadioButton rb_woman;
 
     @Override
     public void onDestroy() {
@@ -39,42 +55,58 @@ public class RegisterFragment extends BaseFragment {
 
     }
 
-    @Event({R.id.btn_register, R.id.btn_login, R.id.btn_upload, R.id.btn_mutil_upload, R.id.btn_download, R.id.btn_mutil_download})
+    @Event({R.id.btn_register})
     private void mEvent(View view) {
         switch (view.getId()) {
             case R.id.btn_register:
-                BLog.e("  btn_register ");
-                UserBean userBean = new UserBean();
-                userBean.setEmail("33@qq.com");
-                userBean.setPassword("123456");
-                userBean.setSex(1);
-                userBean.setUsername("beini");
-                BLog.e("  btn_register  " + userBean.toString());
-                userPresenter.registerUser(userBean, this);
-                break;
-            case R.id.btn_login:
-                UserBean userBeanLogin = new UserBean();
-                userBeanLogin.setEmail("874140704@qq.com");
-                userBeanLogin.setPassword("123456");
-                userPresenter.loginUser(userBeanLogin, this);
-                break;
-            case R.id.btn_upload:
-                userPresenter.uploadSingleFileProcess(this);
-                break;
-            case R.id.btn_mutil_upload:
-                userPresenter.uploadMultiFile(this);
-                break;
-            case R.id.btn_download:
-                String urlDownLoad = "http://120.76.41.61/source/sound/sleep/Sleep_Bird_Chirping.mp3";
-                userPresenter.downloadFile(urlDownLoad);
-
-                break;
-            case R.id.btn_mutil_download:
-                String urlMutilDownLoad = "http://120.76.41.61/source/sound/sleep/Sleep_Bird_Chirping.mp3";
-                userPresenter.downloadBreakpoint(urlMutilDownLoad);
+                UserBean userBean = returnUserBean();
+                if (userBean != null) {
+                    userPresenter.registerUser(userBean, this);
+                }
                 break;
 
         }
+    }
+
+    public UserBean returnUserBean() {
+        UserBean userBean = new UserBean();
+        String email = et_re_email.getText().toString();
+        String username = et_re_username.getText().toString();
+        String password = et_re_password.getText().toString();
+
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getActivity(), "邮箱错误", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        if (TextUtils.isEmpty(username)) {
+            Toast.makeText(getActivity(), "用户名错误", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(getActivity(), "密码错误", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        userBean.setEmail(email);
+        int id = 0;
+        if (rb_main.isChecked()) {
+            id = 0;
+        }
+        if (rb_woman.isChecked()) {
+            id = 1;
+        }
+        userBean.setPassword(password);
+        userBean.setSex(id);
+        userBean.setUsername(username);
+
+        return userBean;
+    }
+
+    public void onSuccess() {
+        Toast.makeText(getActivity(), "注册成功", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onFailed() {
+        Toast.makeText(getActivity(), "注册成功", Toast.LENGTH_SHORT).show();
     }
 
 }
