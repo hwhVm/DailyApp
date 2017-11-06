@@ -5,28 +5,21 @@
     android:orientation="vertical"
     tools:context=".ui.fragments.DailyEditFragment">
 
-    <Button
-        android:id="@+id/btn_test"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="test" />
 
-    <Button
-        android:id="@+id/btn_get_cer_info"
+    <EditText
+        android:id="@+id/daily_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="get cer info" />
+        android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/btn_get_info"
+    <EditText
+        android:id="@+id/daily_author"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="get info" />
+        android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/btn_get_dailyCount"
+    <EditText
+        android:id="@+id/daily_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=" queryDailyCount" />
+        android:layout_height="wrap_content" />
+
 
 </LinearLayout>
