@@ -1,6 +1,7 @@
 package beini.com.dailyapp.ui.component;
 
 import beini.com.dailyapp.ui.fragments.DailyEditFragment;
+import beini.com.dailyapp.ui.fragments.LoginFragment;
 import beini.com.dailyapp.ui.fragments.RegisterFragment;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.DailyPresenter;
@@ -19,4 +20,6 @@ public interface DailyComponent {
     void inject(UserPresenter userPresenter);
 
     void inject(RegisterFragment registerFragment);
+
+    void inject(LoginFragment loginFragment);
 }

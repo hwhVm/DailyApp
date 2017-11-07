@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.constant.NetConstants;
+import beini.com.dailyapp.http.progress.ProgressResponseBody;
 import beini.com.dailyapp.util.BLog;
 import io.reactivex.Flowable;
 import okhttp3.MediaType;
@@ -126,10 +127,16 @@ public class RxNetUtil {
         return rxReServer.downloadFile(url);
     }
 
+    // 1 查询本地是否有缓存(是否完成)
     public Flowable<ResponseBody> downloadBreakpoint(String rang, String url) {
 
         return rxReServer.downloadBreakpoint(rang, url);
     }
 
+    //带进度回调
+    public Flowable<ResponseBody> downloadFleWithPro(String url) {
+
+        return rxReServer.downloadFleWithPro(url);
+    }
 
 }

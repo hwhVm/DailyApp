@@ -8,6 +8,7 @@
 
     <EditText
         android:id="@+id/et_email"
+        android:layout_marginTop="200dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -35,4 +36,9 @@
         android:padding="15dp"
         android:layout_marginRight="35dp"
         android:text="注册" />
+
+    <Button
+        android:id="@+id/btn_downfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>

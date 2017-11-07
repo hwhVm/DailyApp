@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
+import beini.com.dailyapp.http.progress.ProgressResponseBody;
 import io.reactivex.Flowable;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
@@ -52,6 +53,11 @@ public interface RxReServer {
     @GET
     Flowable<ResponseBody> downloadFile(@Url String fileUrl);
 
+
+    @Streaming//下载大文件时候使用,带回调
+    @GET
+    Flowable<ResponseBody> downloadFleWithPro(@Url String fileUrl);
+
     /**
      * 断点下载
      * 请求文件总大小
@@ -62,10 +68,13 @@ public interface RxReServer {
      * 判断文件大小，检验文件大小
      *
      * @param range
+     * @param lastModify 文件是否修改  @Header("If-Range") String lastModify,
      * @param url
      * @return
      */
     @GET
     @Streaming
     Flowable<ResponseBody> downloadBreakpoint(@Header("RANGE") String range, @Url String url);
+
+
 }
