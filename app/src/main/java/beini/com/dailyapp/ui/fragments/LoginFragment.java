@@ -16,6 +16,8 @@ import beini.com.dailyapp.bind.ViewInject;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.module.DailyModule;
+import beini.com.dailyapp.ui.presenter.BreakPointUtilDemo;
+import beini.com.dailyapp.ui.presenter.FilePresenter;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
 import beini.com.dailyapp.util.BLog;
 
@@ -30,6 +32,8 @@ public class LoginFragment extends BaseFragment {
     EditText et_password;
     @Inject
     UserPresenter userPresenter;
+    @Inject
+    FilePresenter filePresenter;
 
     @Override
     public void initData() {
@@ -42,7 +46,7 @@ public class LoginFragment extends BaseFragment {
 
     }
 
-    @Event({R.id.text_register, R.id.btn_login, R.id.btn_downfile})
+    @Event({R.id.text_register, R.id.btn_login, R.id.btn_downfile, R.id.btn_stop_downfile})
     private void mEvent(View view) {
         switch (view.getId()) {
             case R.id.btn_login:
@@ -56,13 +60,21 @@ public class LoginFragment extends BaseFragment {
                 baseActivity.replaceFragment(RegisterFragment.class);
                 break;
             case R.id.btn_downfile:
-                String urlDownLoad = "http://120.76.41.61/source/sound/sleep/Sleep_Bird_Chirping.mp3";
-                userPresenter.downloadFleWithPro(urlDownLoad);
-//                userPresenter.downloadFile(urlDownLoad);
-
+//                String urlDownLoad = "http://120.76.41.61/source/sound/sleep/Sleep_Bird_Chirping.mp3";
+//                filePresenter.downloadFile(urlDownLoad);
+//                filePresenter.uploadSingleFile();
+                breakPointUtilDemo = new BreakPointUtilDemo();
+                breakPointUtilDemo.initNet();
+//                breakPointUtilDemo.downFile();
+                breakPointUtilDemo.downFile();
+                break;
+            case R.id.btn_stop_downfile:
+                breakPointUtilDemo.stopDownFile();
                 break;
         }
     }
+
+    BreakPointUtilDemo breakPointUtilDemo;
 
     public UserBean returnUserBean() {
         UserBean userBean = new UserBean();

@@ -3,19 +3,23 @@ package beini.com.dailyapp.http;
 import android.support.annotation.NonNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.constant.NetConstants;
+import beini.com.dailyapp.http.progress.ProgressListener;
 import beini.com.dailyapp.http.progress.ProgressResponseBody;
 import beini.com.dailyapp.util.BLog;
 import io.reactivex.Flowable;
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -31,6 +35,13 @@ public class RxNetUtil {
     private static Retrofit retrofit;
     private static RxReServer rxReServer;
     private static int DEFAULT_TIMEOUT = 5;
+    private static ProgressListener progressListener = new ProgressListener() {//考虑是否把拦截器分开
+        @Override
+        public void update(long bytesRead, long contentLength, boolean done) {
+            BLog.e("      bytesRead=" + bytesRead + "   contentLength=" + contentLength + "  done=" + done + "  " + ((100 * bytesRead) / contentLength));
+        }
+    };
+
 
     public static RxNetUtil getSingleton() {
         if (instance == null) {
@@ -56,6 +67,15 @@ public class RxNetUtil {
 //                                    return chain.proceed(builder.build());
 //                                }
 //                            })
+                            .addNetworkInterceptor(new Interceptor() {
+                                @Override
+                                public Response intercept(Chain chain) throws IOException {
+                                    Response originalResponse = chain.proceed(chain.request());
+                                    return originalResponse.newBuilder()
+                                            .body(new ProgressResponseBody(originalResponse.body(), progressListener))
+                                            .build();
+                                }
+                            })
                             .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
 //                          .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(), SSLSocketFactoryUtils.createTrustAllManager())//信任所有证书
                             .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(GlobalApplication.getInstance().getApplicationContext())
@@ -91,6 +111,11 @@ public class RxNetUtil {
         return rxReServer.sendRequestReturnResponseBody(url, object);
     }
 
+    /**
+     * @param url
+     * @param file
+     * @return
+     */
     public Flowable<ResponseBody> uploadFileSingle(@NonNull final String url, @NonNull File file) {
         // create RequestBody instance from file
         RequestBody requestFile =
@@ -122,15 +147,10 @@ public class RxNetUtil {
         return rxReServer.uploadMultiFile(url, parts);
     }
 
+
     public Flowable<ResponseBody> downloadFile(String url) {
 
         return rxReServer.downloadFile(url);
-    }
-
-    // 1 查询本地是否有缓存(是否完成)
-    public Flowable<ResponseBody> downloadBreakpoint(String rang, String url) {
-
-        return rxReServer.downloadBreakpoint(rang, url);
     }
 
     //带进度回调
@@ -138,5 +158,13 @@ public class RxNetUtil {
 
         return rxReServer.downloadFleWithPro(url);
     }
+
+
+    // 1 查询本地是否有缓存(是否完成)
+    public Flowable<ResponseBody> downloadBreakpoint(String rang, String url) {
+
+        return rxReServer.downloadBreakpoint(rang, url);
+    }
+
 
 }

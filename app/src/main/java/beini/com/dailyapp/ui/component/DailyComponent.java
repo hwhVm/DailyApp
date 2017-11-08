@@ -5,6 +5,7 @@ import beini.com.dailyapp.ui.fragments.LoginFragment;
 import beini.com.dailyapp.ui.fragments.RegisterFragment;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.DailyPresenter;
+import beini.com.dailyapp.ui.presenter.FilePresenter;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
 import dagger.Component;
 
@@ -22,4 +23,6 @@ public interface DailyComponent {
     void inject(RegisterFragment registerFragment);
 
     void inject(LoginFragment loginFragment);
+
+    void inject(FilePresenter filePresenter);
 }

@@ -2,6 +2,7 @@ package beini.com.dailyapp.ui.module;
 
 import beini.com.dailyapp.ui.model.RequestModel;
 import beini.com.dailyapp.ui.presenter.DailyPresenter;
+import beini.com.dailyapp.ui.presenter.FilePresenter;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
 import dagger.Module;
 import dagger.Provides;
@@ -25,5 +26,10 @@ public class DailyModule {
     @Provides
     public UserPresenter returnUserPresenter() {
         return new UserPresenter();
+    }
+
+    @Provides
+    public FilePresenter returnFilePresenter() {
+        return new FilePresenter();
     }
 }

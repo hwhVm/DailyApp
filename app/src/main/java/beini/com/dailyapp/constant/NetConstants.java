@@ -18,4 +18,5 @@ public class NetConstants {
     public static String URL_QUERY_DAILY_BY_NUM = "queryDailyByNum";
     public static String URL_QUERY_DAILY_COUNT = "queryDailyCount";
     public static String URL_LOGOUT = "logout";
+    public static String URL_BREAKPOINT_DOWNLOAD = "breakpointdownload";
 }

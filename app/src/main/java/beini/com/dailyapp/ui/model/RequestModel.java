@@ -38,6 +38,7 @@ public class RequestModel {
         RxNetUtil.getSingleton().uploadFileSingle(url, file).observeOn(scheduler).subscribeOn(Schedulers.io()).subscribe(subscriber, consumer);
     }
 
+
     //上传多文件
     public void uploadMultiFile(@NonNull final String url, @NonNull List<File> files, @NonNull Scheduler scheduler,
                                 @NonNull final Consumer<ResponseBody> subscriber, Consumer<Throwable> consumer) {
@@ -103,7 +104,7 @@ public class RequestModel {
                 .map(functionResponse)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber,consumer);
+                .subscribe(subscriber, consumer);
 
     }
 
