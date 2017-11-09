@@ -44,21 +44,20 @@ public class RxNetUtil {
 
 
     public static RxNetUtil getSingleton() {
-        if (instance == null) {
-            synchronized (RxNetUtil.class) {
-                if (instance == null) {
-                    instance = new RxNetUtil();
-                    HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                        @Override
-                        public void log(String message) {
-                            BLog.h("      http log :  " + message);
-                        }
-                    });
-                    httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);//日志级别,NONE BASIC HEADERS BODY
+        synchronized (RxNetUtil.class) {
+            if (instance == null) {
+                instance = new RxNetUtil();
+                HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+                    @Override
+                    public void log(String message) {
+                        BLog.h("      http log :  " + message);
+                    }
+                });
+                httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);//日志级别,NONE BASIC HEADERS BODY
 
-                    OkHttpClient client = new OkHttpClient//添加头信息，cookie等
-                            .Builder()
-                            // 添加通用的Header
+                OkHttpClient client = new OkHttpClient//添加头信息，cookie等
+                        .Builder()
+                        // 添加通用的Header
 //                            .addInterceptor(new Interceptor() {
 //                                @Override
 //                                public okhttp3.Response intercept(Chain chain) throws IOException {
@@ -67,33 +66,33 @@ public class RxNetUtil {
 //                                    return chain.proceed(builder.build());
 //                                }
 //                            })
-                            .addNetworkInterceptor(new Interceptor() {
-                                @Override
-                                public Response intercept(Chain chain) throws IOException {
-                                    Response originalResponse = chain.proceed(chain.request());
-                                    return originalResponse.newBuilder()
-                                            .body(new ProgressResponseBody(originalResponse.body(), progressListener))
-                                            .build();
-                                }
-                            })
-                            .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+//                            .retryOnConnectionFailure()//重试机制
+                        .addNetworkInterceptor(new Interceptor() {
+                            @Override
+                            public Response intercept(Chain chain) throws IOException {
+                                Response originalResponse = chain.proceed(chain.request());
+                                return originalResponse.newBuilder()
+                                        .body(new ProgressResponseBody(originalResponse.body(), progressListener))
+                                        .build();
+                            }
+                        })
+                        .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
 //                          .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(), SSLSocketFactoryUtils.createTrustAllManager())//信任所有证书
-                            .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(GlobalApplication.getInstance().getApplicationContext())
-                                    , SSLSocketFactoryUtils.createTrustAllManager())
-                            .hostnameVerifier(new SSLSocketFactoryUtils.TrustAllHostnameVerifier())
-                            .addInterceptor(httpLoggingInterceptor)
-                            .build();
-                    retrofit = new Retrofit.Builder()
-                            .client(client)
-                            .baseUrl(NetConstants.ROOT_URL)
-                            .addConverterFactory(GsonConverterFactory.create())//compile 'com.squareup.retrofit2:converter-gson:2.0.2'
-                            // 添加Retrofit到RxJava的转换器
-                            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                        .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(GlobalApplication.getInstance().getApplicationContext())
+                                , SSLSocketFactoryUtils.createTrustAllManager())
+                        .hostnameVerifier(new SSLSocketFactoryUtils.TrustAllHostnameVerifier())
+                        .addInterceptor(httpLoggingInterceptor)
+                        .build();
+                retrofit = new Retrofit.Builder()
+                        .client(client)
+                        .baseUrl(NetConstants.ROOT_URL)
+                        .addConverterFactory(GsonConverterFactory.create())//compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+                        // 添加Retrofit到RxJava的转换器
+                        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 //                          .addConverterFactory(ScalarsConverterFactory.create())//普通类型
-                            .build();
+                        .build();
 
-                    rxReServer = retrofit.create(RxReServer.class);
-                }
+                rxReServer = retrofit.create(RxReServer.class);
             }
         }
         return instance;

@@ -13,6 +13,8 @@ import beini.com.dailyapp.bean.UserBean;
 import beini.com.dailyapp.bind.ContentView;
 import beini.com.dailyapp.bind.Event;
 import beini.com.dailyapp.bind.ViewInject;
+import beini.com.dailyapp.http.progress.CusNetworkInterceptor;
+import beini.com.dailyapp.http.progress.ProgressListener;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.module.DailyModule;
@@ -63,18 +65,18 @@ public class LoginFragment extends BaseFragment {
 //                String urlDownLoad = "http://120.76.41.61/source/sound/sleep/Sleep_Bird_Chirping.mp3";
 //                filePresenter.downloadFile(urlDownLoad);
 //                filePresenter.uploadSingleFile();
-                breakPointUtilDemo = new BreakPointUtilDemo();
-                breakPointUtilDemo.initNet();
-//                breakPointUtilDemo.downFile();
-                breakPointUtilDemo.downFile();
+                BreakPointUtilDemo.getSingleton().downFile("2000000", new CusNetworkInterceptor(new ProgressListener() {
+                    @Override
+                    public void update(long bytesRead, long contentLength, boolean done) {
+                        BLog.e("          bytesRead= " + bytesRead + "  contentLength=" + contentLength + "  done=" + done);
+                    }
+                }));
                 break;
             case R.id.btn_stop_downfile:
-                breakPointUtilDemo.stopDownFile();
                 break;
         }
     }
 
-    BreakPointUtilDemo breakPointUtilDemo;
 
     public UserBean returnUserBean() {
         UserBean userBean = new UserBean();

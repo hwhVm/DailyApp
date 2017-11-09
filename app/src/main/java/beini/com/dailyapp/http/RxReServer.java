@@ -3,6 +3,7 @@ package beini.com.dailyapp.http;
 import android.support.annotation.NonNull;
 
 import java.util.List;
+import java.util.Observable;
 
 import beini.com.dailyapp.http.progress.ProgressResponseBody;
 import io.reactivex.Flowable;
@@ -49,7 +50,7 @@ public interface RxReServer {
      * @param fileUrl
      * @return
      */
-    @Streaming//下载大文件时候使用
+    @Streaming//下载大文件时候使用,小文件可以不写
     @GET
     Flowable<ResponseBody> downloadFile(@Url String fileUrl);
 

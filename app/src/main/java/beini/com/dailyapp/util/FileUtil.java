@@ -1,7 +1,7 @@
 package beini.com.dailyapp.util;
 
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -32,9 +32,14 @@ public class FileUtil {
         }
     }
 
-    public static void copyFile(String strPath, String destPath) throws FileNotFoundException {
+    public static void copyFile(String strPath, String destPath) throws IOException {
         FileInputStream fileInputStream;
         FileOutputStream filefOutputStream;
+        File file = new File(strPath);
+        if (!file.exists()) {
+            BLog.e("----------->");
+            file.createNewFile();
+        }
         fileInputStream = new FileInputStream(strPath);
         filefOutputStream = new FileOutputStream(destPath);
         byte[] bufferByte = new byte[100 * 1024];//缓冲区的大小如何设置 ？

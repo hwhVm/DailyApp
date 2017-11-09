@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import java.io.IOException;
 
+import beini.com.dailyapp.util.BLog;
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
 import okio.Buffer;
@@ -23,6 +24,7 @@ public class ProgressResponseBody extends ResponseBody {
     private BufferedSource bufferedSource;
 
     public ProgressResponseBody(ResponseBody responseBody, ProgressListener progressListener) {
+        BLog.e("   ProgressResponseBody   ");
         this.responseBody = responseBody;
         this.progressListener = progressListener;
     }
@@ -40,6 +42,7 @@ public class ProgressResponseBody extends ResponseBody {
 
     @Override
     public BufferedSource source() {
+        BLog.e(" -----------source------>");
         if (bufferedSource == null) {
             bufferedSource = Okio.buffer(source(responseBody.source()));
         }
@@ -52,6 +55,7 @@ public class ProgressResponseBody extends ResponseBody {
 
             @Override
             public long read(Buffer sink, long byteCount) throws IOException {
+                BLog.e(" ----------------->");
                 long bytesRead = super.read(sink, byteCount);
                 totalBytesRead += bytesRead != -1 ? bytesRead : 0;
                 progressListener.update(totalBytesRead, responseBody.contentLength(), bytesRead == -1);
@@ -59,4 +63,6 @@ public class ProgressResponseBody extends ResponseBody {
             }
         };
     }
+
+
 }
