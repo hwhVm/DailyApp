@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.io.SequenceInputStream;
 import java.nio.MappedByteBuffer;
@@ -13,10 +14,26 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
+import okio.BufferedSink;
+import okio.Okio;
+
 /**
  * Created by beini on 2017/10/27.
  */
 public class FileUtil {
+
+    public static void writeInputStreamToSD(String fileDir, InputStream inputStream) {
+        File file = new File(fileDir);
+        try {
+            BufferedSink bufferedSink = Okio.buffer(Okio.sink(file));
+            bufferedSink.writeAll(Okio.source(inputStream));
+            bufferedSink.flush();
+            bufferedSink.close();
+        } catch (IOException e) {
+            BLog.e("  writeInputStreamToSD e.getLocalizedMessage()= " + e.getLocalizedMessage());
+            e.printStackTrace();
+        }
+    }
 
     public static void writeBytesToSD(String fileDir, byte[] data) {
         try {
@@ -27,7 +44,7 @@ public class FileUtil {
             fileChannel.close();
             fos.close();
         } catch (IOException e) {
-            System.out.println(" " + e.getLocalizedMessage());
+            BLog.e(" e.getLocalizedMessage()= " + e.getLocalizedMessage());
             e.printStackTrace();
         }
     }

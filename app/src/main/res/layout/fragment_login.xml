@@ -8,9 +8,9 @@
 
     <EditText
         android:id="@+id/et_email"
-        android:layout_marginTop="200dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp" />
 
     <EditText
         android:id="@+id/et_password"
@@ -31,18 +31,33 @@
         android:id="@+id/text_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
         android:layout_gravity="right"
-        android:padding="15dp"
         android:layout_marginRight="35dp"
+        android:layout_marginTop="15dp"
+        android:padding="15dp"
         android:text="注册" />
+
+    <ProgressBar
+        android:id="@+id/pro_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="25dp"
+        android:max="100"
+        android:progress="0" />
 
     <Button
         android:id="@+id/btn_downfile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/btn_stop_downfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btn_clear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>

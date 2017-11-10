@@ -54,11 +54,6 @@ public interface RxReServer {
     @GET
     Flowable<ResponseBody> downloadFile(@Url String fileUrl);
 
-
-    @Streaming//下载大文件时候使用,带回调
-    @GET
-    Flowable<ResponseBody> downloadFleWithPro(@Url String fileUrl);
-
     /**
      * 断点下载
      * 请求文件总大小

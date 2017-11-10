@@ -5,7 +5,10 @@ import android.support.annotation.NonNull;
 import java.io.File;
 import java.util.List;
 
+import beini.com.dailyapp.bean.FileRequestBean;
+import beini.com.dailyapp.http.BreakPointUtil;
 import beini.com.dailyapp.http.RxNetUtil;
+import beini.com.dailyapp.http.progress.CusNetworkInterceptor;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;
@@ -88,7 +91,8 @@ public class RequestModel {
 
     //文件下载
     public void downloadFile(final String url,
-                             @NonNull final Function<ResponseBody, Boolean> functionResponse, @NonNull final Consumer<Boolean> subscriber, Consumer<Throwable> consumer) {
+                             @NonNull final Function<ResponseBody, Boolean> functionResponse,
+                             @NonNull final Consumer<Boolean> subscriber, Consumer<Throwable> consumer) {
         RxNetUtil.getSingleton().downloadFile(url)
                 .map(functionResponse)
                 .subscribeOn(Schedulers.io())
@@ -96,28 +100,13 @@ public class RequestModel {
                 .subscribe(subscriber, consumer);
     }
 
-    //文件下载,带进度回调
-    public void downloadFleWithPro(final String url
-            , @NonNull final Function<ResponseBody, Boolean> functionResponse, @NonNull final Consumer<Boolean> subscriber, Consumer<Throwable> consumer) {
-
-        RxNetUtil.getSingleton().downloadFleWithPro(url)
-                .map(functionResponse)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber, consumer);
-
-    }
-
     //断点续传
-    public void downloadBreakpoint(String rnag, String url
-            , @NonNull final Function<ResponseBody, Boolean> functionResponse, @NonNull Function<Boolean, Object> booleanObjectFunction) {
-        RxNetUtil.getSingleton().downloadBreakpoint(rnag, url)
-                .map(functionResponse)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(booleanObjectFunction)
-                .subscribe();
-
+    public void downloadFileBreakPoint(FileRequestBean fileRequestBean, CusNetworkInterceptor cusNetworkInterceptor,
+                                       Consumer<ResponseBody> consumer, Consumer<Throwable> throwableConsumer) {
+        BreakPointUtil.getSingleton().downFile(fileRequestBean, cusNetworkInterceptor, consumer, throwableConsumer);
     }
 
+    public void cancelDownloadFileBreakPoint() {
+        BreakPointUtil.getSingleton().cancelDownFile();
+    }
 }

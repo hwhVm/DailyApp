@@ -10,8 +10,6 @@ import java.util.concurrent.TimeUnit;
 
 import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.constant.NetConstants;
-import beini.com.dailyapp.http.progress.ProgressListener;
-import beini.com.dailyapp.http.progress.ProgressResponseBody;
 import beini.com.dailyapp.util.BLog;
 import io.reactivex.Flowable;
 import okhttp3.Interceptor;
@@ -35,13 +33,6 @@ public class RxNetUtil {
     private static Retrofit retrofit;
     private static RxReServer rxReServer;
     private static int DEFAULT_TIMEOUT = 5;
-    private static ProgressListener progressListener = new ProgressListener() {//考虑是否把拦截器分开
-        @Override
-        public void update(long bytesRead, long contentLength, boolean done) {
-            BLog.e("      bytesRead=" + bytesRead + "   contentLength=" + contentLength + "  done=" + done + "  " + ((100 * bytesRead) / contentLength));
-        }
-    };
-
 
     public static RxNetUtil getSingleton() {
         synchronized (RxNetUtil.class) {
@@ -72,7 +63,6 @@ public class RxNetUtil {
                             public Response intercept(Chain chain) throws IOException {
                                 Response originalResponse = chain.proceed(chain.request());
                                 return originalResponse.newBuilder()
-                                        .body(new ProgressResponseBody(originalResponse.body(), progressListener))
                                         .build();
                             }
                         })
@@ -152,18 +142,7 @@ public class RxNetUtil {
         return rxReServer.downloadFile(url);
     }
 
-    //带进度回调
-    public Flowable<ResponseBody> downloadFleWithPro(String url) {
 
-        return rxReServer.downloadFleWithPro(url);
-    }
-
-
-    // 1 查询本地是否有缓存(是否完成)
-    public Flowable<ResponseBody> downloadBreakpoint(String rang, String url) {
-
-        return rxReServer.downloadBreakpoint(rang, url);
-    }
 
 
 }

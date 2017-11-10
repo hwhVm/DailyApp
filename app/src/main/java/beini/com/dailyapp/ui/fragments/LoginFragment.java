@@ -4,24 +4,26 @@ package beini.com.dailyapp.ui.fragments;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import javax.inject.Inject;
 
+import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.R;
+import beini.com.dailyapp.bean.FileRequestBean;
 import beini.com.dailyapp.bean.UserBean;
 import beini.com.dailyapp.bind.ContentView;
 import beini.com.dailyapp.bind.Event;
 import beini.com.dailyapp.bind.ViewInject;
-import beini.com.dailyapp.http.progress.CusNetworkInterceptor;
-import beini.com.dailyapp.http.progress.ProgressListener;
+import beini.com.dailyapp.constant.Constants;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.module.DailyModule;
-import beini.com.dailyapp.ui.presenter.BreakPointUtilDemo;
 import beini.com.dailyapp.ui.presenter.FilePresenter;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
 import beini.com.dailyapp.util.BLog;
+import beini.com.dailyapp.util.SPUtils;
 
 /**
  * create by beini 2017/11/4
@@ -36,6 +38,8 @@ public class LoginFragment extends BaseFragment {
     UserPresenter userPresenter;
     @Inject
     FilePresenter filePresenter;
+    @ViewInject(R.id.pro_bar)
+    ProgressBar pro_bar;
 
     @Override
     public void initData() {
@@ -48,7 +52,7 @@ public class LoginFragment extends BaseFragment {
 
     }
 
-    @Event({R.id.text_register, R.id.btn_login, R.id.btn_downfile, R.id.btn_stop_downfile})
+    @Event({R.id.text_register, R.id.btn_login, R.id.btn_downfile, R.id.btn_stop_downfile, R.id.btn_clear})
     private void mEvent(View view) {
         switch (view.getId()) {
             case R.id.btn_login:
@@ -62,17 +66,13 @@ public class LoginFragment extends BaseFragment {
                 baseActivity.replaceFragment(RegisterFragment.class);
                 break;
             case R.id.btn_downfile:
-//                String urlDownLoad = "http://120.76.41.61/source/sound/sleep/Sleep_Bird_Chirping.mp3";
-//                filePresenter.downloadFile(urlDownLoad);
-//                filePresenter.uploadSingleFile();
-                BreakPointUtilDemo.getSingleton().downFile("2000000", new CusNetworkInterceptor(new ProgressListener() {
-                    @Override
-                    public void update(long bytesRead, long contentLength, boolean done) {
-                        BLog.e("          bytesRead= " + bytesRead + "  contentLength=" + contentLength + "  done=" + done);
-                    }
-                }));
+                filePresenter.getFileInfo(new FileRequestBean(), this);
                 break;
             case R.id.btn_stop_downfile:
+                filePresenter.cancelDownloadFileBreakPoint();
+                break;
+            case R.id.btn_clear:
+                SPUtils.clear(GlobalApplication.getInstance().getApplicationContext());
                 break;
         }
     }
@@ -95,12 +95,24 @@ public class LoginFragment extends BaseFragment {
         return userBean;
     }
 
+    public void onStartDownload(FileRequestBean fileRequestBean) {
+        // 根据文件id/username 返回文件的相关信息：大小，
+        //首先验证本地文件的完整性,服务器端是否修改
+        long localRange = (long) SPUtils.get(GlobalApplication.getInstance().getApplicationContext(), Constants.DEMO_RANGE, 0L);
+        BLog.e("   localRange=" + localRange);
+        fileRequestBean.setRange(String.valueOf(localRange));
+        filePresenter.downloadFileBreakPoint(fileRequestBean, pro_bar);
+    }
+
+    public void onFailedDownload() {
+        Toast.makeText(getActivity(), "下载失败", Toast.LENGTH_SHORT).show();
+    }
+
     public void OnSuccess() {//登录成功
         Toast.makeText(getActivity(), "登录成功", Toast.LENGTH_SHORT).show();
     }
 
     public void onFalied() {//登录失败
         Toast.makeText(getActivity(), "登录失败", Toast.LENGTH_SHORT).show();
-
     }
 }

@@ -27,6 +27,7 @@ public class ProgressResponseBody extends ResponseBody {
         BLog.e("   ProgressResponseBody   ");
         this.responseBody = responseBody;
         this.progressListener = progressListener;
+        this.progressListener.onStart();
     }
 
     @Nullable
@@ -42,10 +43,10 @@ public class ProgressResponseBody extends ResponseBody {
 
     @Override
     public BufferedSource source() {
-        BLog.e(" -----------source------>");
         if (bufferedSource == null) {
             bufferedSource = Okio.buffer(source(responseBody.source()));
         }
+        BLog.e("       source     ");
         return bufferedSource;
     }
 
@@ -54,11 +55,19 @@ public class ProgressResponseBody extends ResponseBody {
             long totalBytesRead = 0L;
 
             @Override
-            public long read(Buffer sink, long byteCount) throws IOException {
-                BLog.e(" ----------------->");
-                long bytesRead = super.read(sink, byteCount);
+            public long read(Buffer sink, long byteCount) {
+                long bytesRead = 0;
+                try {
+                    bytesRead = super.read(sink, byteCount);
+                } catch (IOException e) {
+                    progressListener.onError(e);
+                    e.printStackTrace();
+                }
                 totalBytesRead += bytesRead != -1 ? bytesRead : 0;
                 progressListener.update(totalBytesRead, responseBody.contentLength(), bytesRead == -1);
+                if (bytesRead == -1) {
+                    progressListener.onStop();
+                }
                 return bytesRead;
             }
         };

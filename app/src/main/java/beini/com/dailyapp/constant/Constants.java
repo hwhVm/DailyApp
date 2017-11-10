@@ -5,4 +5,5 @@ package beini.com.dailyapp.constant;
  */
 
 public class Constants {
+    public static String DEMO_RANGE = "DEMO_RANGE";
 }

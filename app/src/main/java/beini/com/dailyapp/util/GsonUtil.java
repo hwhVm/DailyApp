@@ -1,5 +1,6 @@
 package beini.com.dailyapp.util;
 
+
 import com.google.gson.Gson;
 
 /**
@@ -21,6 +22,7 @@ public class GsonUtil {
 
     public Object fromJson(String str, Class temClass) {
         return gson.fromJson(str, temClass);
+
     }
 
     public String toJson(Object object) {
