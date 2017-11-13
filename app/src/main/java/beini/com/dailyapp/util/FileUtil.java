@@ -54,7 +54,6 @@ public class FileUtil {
         FileOutputStream filefOutputStream;
         File file = new File(strPath);
         if (!file.exists()) {
-            BLog.e("----------->");
             file.createNewFile();
         }
         fileInputStream = new FileInputStream(strPath);
@@ -115,7 +114,23 @@ public class FileUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
+    }
+    public static void appendFile(String str, String dest) {
+        RandomAccessFile randomAccessStr;
+        RandomAccessFile randomAccessDest;
+        try {
+            randomAccessStr = new RandomAccessFile(str, "rw");
+            randomAccessDest = new RandomAccessFile(dest, "rw");
+            long strLength = randomAccessStr.length();
+            long destLength = randomAccessDest.length();
+            randomAccessStr.setLength(strLength + destLength);
+            FileChannel fileChannelStr = randomAccessStr.getChannel();
+            FileChannel fileChannel1Dest = randomAccessDest.getChannel();
+            fileChannelStr.transferFrom(fileChannel1Dest, strLength, fileChannel1Dest.size());
+            randomAccessStr.close();
+            randomAccessDest.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

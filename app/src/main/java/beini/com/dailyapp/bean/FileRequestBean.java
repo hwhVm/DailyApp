@@ -9,7 +9,15 @@ public class FileRequestBean {
     private String range;
     private long lastModified;
     private String fileName;
+    private String fileMd5;
 
+    public String getFileMd5() {
+        return fileMd5;
+    }
+
+    public void setFileMd5(String fileMd5) {
+        this.fileMd5 = fileMd5;
+    }
 
     private String filePath;
     private long fileSize;

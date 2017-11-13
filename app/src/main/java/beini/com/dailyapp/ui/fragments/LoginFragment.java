@@ -7,6 +7,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
 import beini.com.dailyapp.GlobalApplication;
@@ -23,6 +25,7 @@ import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.FilePresenter;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
 import beini.com.dailyapp.util.BLog;
+import beini.com.dailyapp.util.MD5Util;
 import beini.com.dailyapp.util.SPUtils;
 
 /**
@@ -96,12 +99,28 @@ public class LoginFragment extends BaseFragment {
     }
 
     public void onStartDownload(FileRequestBean fileRequestBean) {
-        // 根据文件id/username 返回文件的相关信息：大小，
-        //首先验证本地文件的完整性,服务器端是否修改
-        long localRange = (long) SPUtils.get(GlobalApplication.getInstance().getApplicationContext(), Constants.DEMO_RANGE, 0L);
-        BLog.e("   localRange=" + localRange);
-        fileRequestBean.setRange(String.valueOf(localRange));
-        filePresenter.downloadFileBreakPoint(fileRequestBean, pro_bar);
+        //根据文件id/username 返回文件的相关信息：大小，
+        //首先验证本地文件的完整性
+        //服务器端是否修改
+        //数据库保存
+        File file = new File(Constants.EXTEND_STORAGE_PATH + "sum.zip");
+        if (file.exists()) {
+            String fileMd5 = MD5Util.file2Md5(file);
+            if (fileMd5.equals(fileRequestBean.getFileMd5())) {
+                //已经下载
+            } else {//文件不完整
+                long localRange = (long) SPUtils.get(GlobalApplication.getInstance().getApplicationContext(), Constants.DEMO_RANGE, 0L);
+                BLog.e("   localRange=" + localRange);
+                fileRequestBean.setRange(String.valueOf(localRange));
+                filePresenter.downloadFileBreakPoint(fileRequestBean, pro_bar);
+            }
+        } else {
+            long localRange = (long) SPUtils.get(GlobalApplication.getInstance().getApplicationContext(), Constants.DEMO_RANGE, 0L);
+            BLog.e("   localRange=" + localRange);
+            fileRequestBean.setRange(String.valueOf(localRange));
+            filePresenter.downloadFileBreakPoint(fileRequestBean, pro_bar);
+        }
+
     }
 
     public void onFailedDownload() {

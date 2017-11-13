@@ -155,6 +155,10 @@ public class FilePresenter {
 
     //断点
     public void downloadFileBreakPoint(final FileRequestBean fileRequestBean, final ProgressBar progressBar) {
+        //初始化
+        final float progressCurrent = (float) Long.parseLong(fileRequestBean.getRange()) / fileRequestBean.getFileSize() * 100;
+        BLog.e("           progress=" + progressCurrent);
+        progressBar.setProgress((int) progressCurrent);
         requestModel.downloadFileBreakPoint(fileRequestBean, new CusNetworkInterceptor(new ProgressListener() {
             @Override
             public void onStart() {
@@ -165,7 +169,7 @@ public class FilePresenter {
             public void update(long bytesRead, long contentLength, boolean done) {
                 float progress = (float) bytesRead / contentLength * 100;
                 BLog.e("                   progress=" + progress);
-                progressBar.setProgress((int) progress);
+                progressBar.setProgress((int) ((int) progressCurrent + progress + progress));
             }
 
             @Override
@@ -182,24 +186,16 @@ public class FilePresenter {
             public void accept(ResponseBody responseBody) throws Exception {
                 long range = Long.parseLong(fileRequestBean.getRange());
                 InputStream inputStream = responseBody.byteStream();
-                String destPath = Environment.getExternalStorageDirectory() + "/mm.zip";
-                BLog.e(" 11111111 ");
                 if (range > 0 && range < fileRequestBean.getFileSize()) {
-                    String tempPath = Environment.getExternalStorageDirectory() + "/temp.zip";
-                    FileUtil.writeInputStreamToSD(tempPath, inputStream);//一般文件有个唯一的id
-                    List<String> cellsPaths = new ArrayList<>();
-                    cellsPaths.add(destPath);
-                    cellsPaths.add(tempPath);
-                    FileUtil.merge(cellsPaths, Environment.getExternalStorageDirectory() + "mm.zip");
-
-                    //
-
+                    FileUtil.writeInputStreamToSD(Constants.EXTEND_STORAGE_PATH + "temp.zip", inputStream);//一般文件有个唯一的id
+                    FileUtil.appendFile(Constants.EXTEND_STORAGE_PATH + "sum.zip", Constants.EXTEND_STORAGE_PATH + "temp.zip");
+                    File file = new File(Constants.EXTEND_STORAGE_PATH + "temp.zip");
+                    file.delete();
                 } else {
-                    FileUtil.writeInputStreamToSD(Environment.getExternalStorageDirectory() + "/mm.zip", inputStream);//一般文件有个唯一的id
-                    File file = new File(destPath);
-                    SPUtils.put(GlobalApplication.getInstance().getApplicationContext(), Constants.DEMO_RANGE, file.length());
+                    FileUtil.writeInputStreamToSD(Constants.EXTEND_STORAGE_PATH + "sum.zip", inputStream);//一般文件有个唯一的id
                 }
-                BLog.e(" 22222222222 ");
+                File file = new File(Constants.EXTEND_STORAGE_PATH + "sum.zip");
+                SPUtils.put(GlobalApplication.getInstance().getApplicationContext(), Constants.DEMO_RANGE, file.length());
             }
         }, new Consumer<Throwable>() {
             @Override

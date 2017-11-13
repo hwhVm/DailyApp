@@ -105,8 +105,10 @@ public class RequestModel {
                                        Consumer<ResponseBody> consumer, Consumer<Throwable> throwableConsumer) {
         BreakPointUtil.getSingleton().downFile(fileRequestBean, cusNetworkInterceptor, consumer, throwableConsumer);
     }
-
     public void cancelDownloadFileBreakPoint() {
         BreakPointUtil.getSingleton().cancelDownFile();
     }
+    //断点多线程下载
+    //  5   个       sum/fileSize=Progress  重试机制（3次）
+
 }
