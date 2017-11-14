@@ -69,7 +69,8 @@ public class LoginFragment extends BaseFragment {
                 baseActivity.replaceFragment(RegisterFragment.class);
                 break;
             case R.id.btn_downfile:
-                filePresenter.getFileInfo(new FileRequestBean(), this);
+//                filePresenter.getFileInfo(new FileRequestBean(), this);
+                filePresenter.uploadFile(pro_bar);
                 break;
             case R.id.btn_stop_downfile:
                 filePresenter.cancelDownloadFileBreakPoint();

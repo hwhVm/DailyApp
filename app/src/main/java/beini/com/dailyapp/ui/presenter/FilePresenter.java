@@ -209,4 +209,41 @@ public class FilePresenter {
         requestModel.cancelDownloadFileBreakPoint();
     }
 
+
+    public void uploadFile(ProgressBar progressBar) {
+        File file = new File(Constants.EXTEND_STORAGE_PATH + "sum.zip");
+        BLog.e(" ------------>file.exists()=" + file.exists());
+        requestModel.uploadFile("0", NetConstants.URL_BREAKPOINT_UPLOAD, file, new ProgressListener() {
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void update(long bytesRead, long contentLength, boolean done) {
+                BLog.e(" ------------ > ");
+            }
+
+            @Override
+            public void onStop() {
+
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        }, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
+            @Override
+            public void accept(ResponseBody responseBody) throws Exception {
+                BLog.e("   accept     ");
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                BLog.e("          throwable=" + throwable.getLocalizedMessage());
+            }
+        });
+
+    }
 }

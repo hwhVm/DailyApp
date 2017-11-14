@@ -72,5 +72,8 @@ public interface RxReServer {
     @Streaming
     Flowable<ResponseBody> downloadBreakpoint(@Header("RANGE") String range, @Url String url);
 
-
+    @Multipart
+    @POST("{url}")
+    Flowable<ResponseBody> uploadBreakpoint(@Header("RANGE") String range, @Path("url") String url,@Part MultipartBody.Part file);
 }
+

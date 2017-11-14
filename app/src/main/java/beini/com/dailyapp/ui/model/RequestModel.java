@@ -9,6 +9,7 @@ import beini.com.dailyapp.bean.FileRequestBean;
 import beini.com.dailyapp.http.BreakPointUtil;
 import beini.com.dailyapp.http.RxNetUtil;
 import beini.com.dailyapp.http.progress.CusNetworkInterceptor;
+import beini.com.dailyapp.http.progress.ProgressListener;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;
@@ -105,8 +106,14 @@ public class RequestModel {
                                        Consumer<ResponseBody> consumer, Consumer<Throwable> throwableConsumer) {
         BreakPointUtil.getSingleton().downFile(fileRequestBean, cusNetworkInterceptor, consumer, throwableConsumer);
     }
+
     public void cancelDownloadFileBreakPoint() {
         BreakPointUtil.getSingleton().cancelDownFile();
+    }
+
+    public void uploadFile(@NonNull String rang, @NonNull String url, @NonNull File file, ProgressListener progressListener,
+                           @NonNull Scheduler scheduler, @NonNull final Consumer<ResponseBody> subscriber, Consumer<Throwable> consumer) {
+        RxNetUtil.getSingleton().uploadFile(rang, url, file, progressListener).observeOn(scheduler).subscribeOn(Schedulers.io()).subscribe(subscriber, consumer);
     }
     //断点多线程下载
     //  5   个       sum/fileSize=Progress  重试机制（3次）

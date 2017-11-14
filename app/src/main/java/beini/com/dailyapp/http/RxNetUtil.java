@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.constant.NetConstants;
+import beini.com.dailyapp.http.progress.ProgressListener;
 import beini.com.dailyapp.util.BLog;
 import io.reactivex.Flowable;
 import okhttp3.Interceptor;
@@ -125,7 +126,7 @@ public class RxNetUtil {
         return rxReServer.uploadSingleFile(url, body);
     }
 
-    public Flowable<ResponseBody> uploadMultiFile(String url, List<File> fileList) {
+    public Flowable<ResponseBody> uploadMultiFile(@NonNull String url, @NonNull List<File> fileList) {
 
         List<MultipartBody.Part> parts = new ArrayList<>(fileList.size());
         for (File file : fileList) {
@@ -137,12 +138,24 @@ public class RxNetUtil {
     }
 
 
-    public Flowable<ResponseBody> downloadFile(String url) {
+    public Flowable<ResponseBody> downloadFile(@NonNull String url) {
 
         return rxReServer.downloadFile(url);
     }
 
 
+    public Flowable<ResponseBody> uploadFile(@NonNull String rang, @NonNull String url, @NonNull File file, ProgressListener progressListener) {
+//        ProgressRequestBody progressRequestBody = new ProgressRequestBody(file, progressListener);
+//        MultipartBody.Part body =
+//                MultipartBody.Part.createFormData("file", file.getName(), progressRequestBody);
+        RequestBody requestFile =
+                RequestBody.create(MediaType.parse("multipart/form-data"), file);
+
+        // MultipartBody.Part is used to send also the actual file name
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+        return rxReServer.uploadBreakpoint("0", url, body);
+    }
 
 
 }
