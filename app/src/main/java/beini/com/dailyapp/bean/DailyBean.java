@@ -39,8 +39,9 @@ public class DailyBean {
         return content;
     }
 
-    public void setContent(String content) {
+    public DailyBean setContent(String content) {
         this.content = content;
+        return this;
     }
 
 
