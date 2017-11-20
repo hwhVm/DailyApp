@@ -1,6 +1,6 @@
 package beini.com.dailyapp.ui;
 
-import beini.com.dailyapp.ui.fragments.DailyShowFragment;
+import beini.com.dailyapp.ui.fragments.LoginFragment;
 
 public class MainActivity extends BaseActivity {
 
@@ -9,7 +9,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initView() {
-//        replaceFragment(RegisterFragment.class);
-        replaceFragment(DailyShowFragment.class);
+        replaceFragment(LoginFragment.class);
     }
 }

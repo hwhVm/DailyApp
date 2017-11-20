@@ -1,6 +1,9 @@
 package beini.com.dailyapp.ui.fragments;
 
 
+import android.Manifest;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -8,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -27,12 +31,15 @@ import beini.com.dailyapp.ui.presenter.UserPresenter;
 import beini.com.dailyapp.util.BLog;
 import beini.com.dailyapp.util.MD5Util;
 import beini.com.dailyapp.util.SPUtils;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
 
 /**
  * create by beini 2017/11/4
  */
 @ContentView(R.layout.fragment_login)
-public class LoginFragment extends BaseFragment {
+public class LoginFragment extends BaseFragment implements EasyPermissions.PermissionCallbacks {
     @ViewInject(R.id.et_email)
     EditText et_email;
     @ViewInject(R.id.et_password)
@@ -43,6 +50,7 @@ public class LoginFragment extends BaseFragment {
     FilePresenter filePresenter;
     @ViewInject(R.id.pro_bar)
     ProgressBar pro_bar;
+    private static final int READ_EXTERNAL_STORAGE = 123;
 
     @Override
     public void initData() {
@@ -59,10 +67,8 @@ public class LoginFragment extends BaseFragment {
     private void mEvent(View view) {
         switch (view.getId()) {
             case R.id.btn_login:
-                UserBean userBean = returnUserBean();
-                if (userBean != null) {
-                    userPresenter.loginUser(userBean, this);
-                }
+                //进行权限检查
+                strorageTask();
                 break;
             case R.id.text_register:
                 BLog.e("   " + (baseActivity == null));
@@ -81,6 +87,25 @@ public class LoginFragment extends BaseFragment {
         }
     }
 
+    @AfterPermissionGranted(READ_EXTERNAL_STORAGE)
+    public void strorageTask() {
+        if (hasExternalStoragePermission()) {
+            login();
+        } else {
+            EasyPermissions.requestPermissions(
+                    this,
+                    getString(R.string.daily_need_read_write_permission),
+                    READ_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+    }
+
+    public void login() {
+        UserBean userBean = returnUserBean();
+        if (userBean != null) {
+            userPresenter.loginUser(userBean, this);
+        }
+    }
 
     public UserBean returnUserBean() {
         UserBean userBean = new UserBean();
@@ -134,5 +159,45 @@ public class LoginFragment extends BaseFragment {
 
     public void onFalied() {//登录失败
         Toast.makeText(getActivity(), "登录失败", Toast.LENGTH_SHORT).show();
+    }
+
+    //
+    private boolean hasExternalStoragePermission() {
+        return EasyPermissions.hasPermissions(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        BLog.e("      onRequestPermissionsResult      requestCode=" + requestCode + "   permissions=" + permissions.length);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        BLog.e("onPermissionsGranted:" + requestCode + ":" + perms.size());
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        BLog.e("onPermissionsDenied:" + requestCode + ":" + perms.size());
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            new AppSettingsDialog.Builder(this).setTitle("title").setRationale("setRationale").build().show();//也可以自定义
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
+            // 从设置返回，判定是否开启了权限
+            if (hasExternalStoragePermission()) {
+                login();
+            } else {
+                BLog.e("    没有进行任何操作     ");
+            }
+
+
+        }
     }
 }
