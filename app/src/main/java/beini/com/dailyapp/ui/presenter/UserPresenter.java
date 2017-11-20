@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import beini.com.dailyapp.bean.UserBean;
 import beini.com.dailyapp.constant.NetConstants;
-import beini.com.dailyapp.http.response.BaseResponseJson;
+import beini.com.dailyapp.net.response.BaseResponseJson;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.fragments.LoginFragment;

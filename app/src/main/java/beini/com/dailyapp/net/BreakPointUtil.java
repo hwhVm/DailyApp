@@ -1,8 +1,8 @@
-package beini.com.dailyapp.http;
+package beini.com.dailyapp.net;
 
 import beini.com.dailyapp.bean.FileRequestBean;
 import beini.com.dailyapp.constant.NetConstants;
-import beini.com.dailyapp.http.progress.CusNetworkInterceptor;
+import beini.com.dailyapp.net.progress.CusNetworkInterceptor;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;

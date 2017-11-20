@@ -1,21 +1,25 @@
-package beini.com.dailyapp.http;
+package beini.com.dailyapp.net;
 
 import android.support.annotation.NonNull;
 
 import java.util.List;
-import java.util.Observable;
+import java.util.Map;
 
-import beini.com.dailyapp.http.progress.ProgressResponseBody;
 import io.reactivex.Flowable;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
+import retrofit2.http.QueryMap;
 import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
@@ -24,22 +28,55 @@ import retrofit2.http.Url;
  */
 
 public interface RxReServer {
+    /**
+     * get
+     */
+    //缓存
+    @GET("{url}")
+    Flowable<ResponseBody> requestStandardGet(@Path("url") String url, @Header("Cache-Control") String cacheControl, @Header("max-age") String maxAge);
 
+    /**
+     * post
+     */
+
+    //标准模式
+    @FormUrlEncoded
+    @POST("{url}")
+    Flowable<ResponseBody> requestStandardPost(@Path("url") String url, @Field("userId") String userId, @Field("password") String password);
+
+    //多参数 @QueryMap
+    @POST("{url}")
+    Call<String> queryMap(@Path("url") String url, @QueryMap Map<String, String> maps);
+
+    //json模式
     @POST("{url}")
     @NonNull
     Flowable<ResponseBody> sendRequestReturnResponseBody(@Path("url") String url, @Body Object baseRequestJson);
 
+    //json模式 缓存
+    @POST("{url}")
+    @NonNull
+    Flowable<ResponseBody> sendRequestReturnResponseBodyCache(@Path("url") String url, @Header("Cache-Control") String cacheControl, @Header("max-age") String maxAge, @Body Object baseRequestJson);
+
+    /**
+     * upload file
+     */
     @Multipart
     @POST("{url}")
-        //单张
-    Flowable<ResponseBody> uploadSingleFile(@Path("url") String url,
-                                            @Part MultipartBody.Part file);
+    //单张
+    Flowable<ResponseBody> uploadSingleFile(@Path("url") String url, @Part MultipartBody.Part file);
 
     //多张
     @Multipart
     @POST("{url}")
     Flowable<ResponseBody> uploadMultiFile(@Path("url") String url, @Part() List<MultipartBody.Part> parts);
 
+    @Multipart
+    @POST("{url}")
+    Flowable<ResponseBody> uploadBreakpoint(@Header("RANGE") String range, @Path("url") String url, @Part MultipartBody.Part file);
+    /**
+     * download file
+     */
     /**
      * 文件下载
      * content-length:文件大小
@@ -72,8 +109,6 @@ public interface RxReServer {
     @Streaming
     Flowable<ResponseBody> downloadBreakpoint(@Header("RANGE") String range, @Url String url);
 
-    @Multipart
-    @POST("{url}")
-    Flowable<ResponseBody> uploadBreakpoint(@Header("RANGE") String range, @Path("url") String url,@Part MultipartBody.Part file);
+
 }
 

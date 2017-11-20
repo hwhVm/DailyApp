@@ -1,4 +1,4 @@
-package beini.com.dailyapp.http.response;
+package beini.com.dailyapp.net.response;
 
 /**
  * Created by beini on 2017/10/25.

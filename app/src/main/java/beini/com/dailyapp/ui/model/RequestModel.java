@@ -6,10 +6,10 @@ import java.io.File;
 import java.util.List;
 
 import beini.com.dailyapp.bean.FileRequestBean;
-import beini.com.dailyapp.http.BreakPointUtil;
-import beini.com.dailyapp.http.RxNetUtil;
-import beini.com.dailyapp.http.progress.CusNetworkInterceptor;
-import beini.com.dailyapp.http.progress.ProgressListener;
+import beini.com.dailyapp.net.BreakPointUtil;
+import beini.com.dailyapp.net.RxNetUtil;
+import beini.com.dailyapp.net.progress.CusNetworkInterceptor;
+import beini.com.dailyapp.net.progress.ProgressListener;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;

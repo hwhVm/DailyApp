@@ -1,4 +1,4 @@
-package beini.com.dailyapp.http;
+package beini.com.dailyapp.net;
 
 import android.content.Context;
 

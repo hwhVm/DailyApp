@@ -1,4 +1,4 @@
-package beini.com.dailyapp.http.progress;
+package beini.com.dailyapp.net.progress;
 
 import java.io.File;
 import java.io.IOException;
