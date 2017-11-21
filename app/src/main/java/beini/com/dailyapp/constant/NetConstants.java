@@ -5,7 +5,7 @@ package beini.com.dailyapp.constant;
  */
 
 public class NetConstants {
-    public static String ROOT_URL = "http://10.0.0.40:8080/";
+    public static String ROOT_URL = "http://10.0.0.34:8080/";
 //    public static String ROOT_URL = "https://10.0.0.40:8443/";
 //    public static String ROOT_URL = "http://192.168.43.144:8080";
 
@@ -20,6 +20,6 @@ public class NetConstants {
     public static String URL_LOGOUT = "logout";
     public static String URL_BREAKPOINT_DOWNLOAD = "breakpointdownload";
     public static String URL_GET_FILE_INFO = "returnFileInfo";
-    public static String URL_BREAKPOINT_UPLOAD= "breakpointUpload";
+    public static String URL_BREAKPOINT_UPLOAD = "breakpointUpload";
 
 }

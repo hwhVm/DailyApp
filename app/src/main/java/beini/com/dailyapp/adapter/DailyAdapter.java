@@ -23,7 +23,7 @@ public class DailyAdapter extends RecyclerView.Adapter<DailyAdapter.DailyHolder>
     private List<DailyBean> dailyBeans;
     private Context context;
     private List<Integer> isCheck;
-    OnItemClickListener onItemClickListener;
+    private OnItemClickListener onItemClickListener;
 
     public DailyAdapter(Context context, List<DailyBean> dailyBeans) {
         this.context = context;
@@ -43,10 +43,10 @@ public class DailyAdapter extends RecyclerView.Adapter<DailyAdapter.DailyHolder>
     }
 
     @Override
-    public void onBindViewHolder(final DailyHolder holder, final int position) {
+    public void onBindViewHolder(final DailyHolder holder,final int position) {
         DailyBean dailyBean = dailyBeans.get(position);
         holder.textView.setText(dailyBean.getContent());
-        holder.itemView.findViewById(R.id.iv_selected).setVisibility((int) isCheck.get(position));
+        holder.itemView.findViewById(R.id.iv_selected).setVisibility(isCheck.get(position));
 
         if (onItemClickListener != null) {
             holder.layout_content.setOnClickListener(new View.OnClickListener() {
@@ -59,12 +59,12 @@ public class DailyAdapter extends RecyclerView.Adapter<DailyAdapter.DailyHolder>
     }
 
 
-    public class DailyHolder extends RecyclerView.ViewHolder {
-        public TextView textView;
-        public ImageView iv_selected;
-        public RelativeLayout layout_content;
+    class DailyHolder extends RecyclerView.ViewHolder {
+        TextView textView;
+        ImageView iv_selected;
+        RelativeLayout layout_content;
 
-        public DailyHolder(View itemView) {
+        DailyHolder(View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.text_content);
             iv_selected = itemView.findViewById(R.id.iv_selected);

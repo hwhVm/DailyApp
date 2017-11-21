@@ -50,7 +50,7 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
     FilePresenter filePresenter;
     @ViewInject(R.id.pro_bar)
     ProgressBar pro_bar;
-    private static final int READ_EXTERNAL_STORAGE = 123;
+
 
     @Override
     public void initData() {
@@ -87,7 +87,7 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
         }
     }
 
-    @AfterPermissionGranted(READ_EXTERNAL_STORAGE)
+    @AfterPermissionGranted(Constants.READ_EXTERNAL_STORAGE)
     public void strorageTask() {
         if (hasExternalStoragePermission()) {
             login();
@@ -95,16 +95,22 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
             EasyPermissions.requestPermissions(
                     this,
                     getString(R.string.daily_need_read_write_permission),
-                    READ_EXTERNAL_STORAGE,
+                    Constants.READ_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE);
         }
     }
 
     public void login() {
-        UserBean userBean = returnUserBean();
-        if (userBean != null) {
-            userPresenter.loginUser(userBean, this);
+        boolean isLogin = (boolean) SPUtils.get(GlobalApplication.getInstance().getApplicationContext(), Constants.IS_LOGINED, false);
+        if (isLogin) {
+            baseActivity.replaceFragment(DailyShowFragment.class);
+        } else {
+            UserBean userBean = returnUserBean();
+            if (userBean != null) {
+                userPresenter.loginUser(userBean, this);
+            }
         }
+
     }
 
     public UserBean returnUserBean() {
@@ -155,6 +161,7 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
 
     public void OnSuccess() {//登录成功
         Toast.makeText(getActivity(), "登录成功", Toast.LENGTH_SHORT).show();
+        baseActivity.replaceFragment(DailyShowFragment.class);
     }
 
     public void onFalied() {//登录失败
@@ -196,8 +203,6 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
             } else {
                 BLog.e("    没有进行任何操作     ");
             }
-
-
         }
     }
 }

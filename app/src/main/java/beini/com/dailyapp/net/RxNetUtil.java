@@ -35,7 +35,7 @@ public class RxNetUtil {
     private static Retrofit retrofit;
     private static RxReServer rxReServer;
     private static int DEFAULT_TIMEOUT = 5;
-    private final static long maxSize = 0L;
+    private final static long maxSize = 1000L;//maxSize>0
     private final static String directroyCache = "";//Android/data/
 
     public static RxNetUtil getSingleton() {
@@ -63,21 +63,21 @@ public class RxNetUtil {
 //                                    return chain.proceed(builder.build());
 //                                }
 //                            })
-                        .addNetworkInterceptor(new Interceptor() {
-                            @Override
-                            public Response intercept(Chain chain) throws IOException {
-                                Response originResponse = chain.proceed(chain.request());
-                                //设置缓存时间为，并移除了pragma消息头，移除它的原因是因为pragma也是控制缓存的一个消息头属性
-                                return originResponse.newBuilder().removeHeader("pragma")
-                                        .header("Cache-Control", "max-age=10")//设置10秒
-                                        .header("Cache-Control", "max-stale=30").build();
-                            }
-                        })
+//                        .addNetworkInterceptor(new Interceptor() {
+//                            @Override
+//                            public Response intercept(Chain chain) throws IOException {
+//                                Response originResponse = chain.proceed(chain.request());
+//                                //设置缓存时间为，并移除了pragma消息头，移除它的原因是因为pragma也是控制缓存的一个消息头属性
+//                                return originResponse.newBuilder().removeHeader("pragma")
+//                                        .header("Cache-Control", "max-age=10")//设置10秒
+//                                        .header("Cache-Control", "max-stale=30").build();
+//                            }
+//                        })
 //                      .retryOnConnectionFailure()//重试机制
                         .connectTimeout(8, TimeUnit.SECONDS) // 设置连接超时时间
 //                        .writeTimeout(8, TimeUnit.SECONDS)// 设置写入超时时间
 //                        .readTimeout(8, TimeUnit.SECONDS)// 设置读取数据超时时间
-                        .cache(cache)
+//                        .cache(cache)
                         .addNetworkInterceptor(new Interceptor() {
                             @Override
                             public Response intercept(Chain chain) throws IOException {

@@ -8,11 +8,18 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import beini.com.dailyapp.R;
 import beini.com.dailyapp.adapter.DailyAdapter;
 import beini.com.dailyapp.bean.DailyBean;
+import beini.com.dailyapp.bean.DailyPageBean;
 import beini.com.dailyapp.bind.ContentView;
 import beini.com.dailyapp.bind.ViewInject;
+import beini.com.dailyapp.ui.component.DaggerDailyComponent;
+import beini.com.dailyapp.ui.component.DailyComponent;
+import beini.com.dailyapp.ui.module.DailyModule;
+import beini.com.dailyapp.ui.presenter.DailyPresenter;
 import beini.com.dailyapp.util.BLog;
 
 /**
@@ -23,28 +30,17 @@ public class DailyShowFragment extends BaseFragment {
     @ViewInject(R.id.recycle_daily_list)
     RecyclerView recycle_daily_list;
     private DailyAdapter dailyAdapter;
+    @Inject
+    DailyPresenter dailyPresenter;
 
     @Override
     public void initData() {
+        DailyComponent build = DaggerDailyComponent.builder().dailyModule(new DailyModule()).build();
+        build.inject(this);
+//        dailyPresenter.queryDailyBynum();
+
+
         final List<DailyBean> dailyBeans = new ArrayList<>();
-        final DailyBean dailyBean1 = new DailyBean().setContent("11111111111");
-        dailyBeans.add(dailyBean1);
-        DailyBean dailyBean2 = new DailyBean().setContent("22222222222");
-        dailyBeans.add(dailyBean2);
-        DailyBean dailyBean3 = new DailyBean().setContent("333333333");
-        dailyBeans.add(dailyBean3);
-        DailyBean dailyBean4 = new DailyBean().setContent("444444444");
-        dailyBeans.add(dailyBean4);
-        DailyBean dailyBean5 = new DailyBean().setContent("555555555");
-        dailyBeans.add(dailyBean5);
-        DailyBean dailyBean6 = new DailyBean().setContent("66666666");
-        dailyBeans.add(dailyBean6);
-        DailyBean dailyBean7 = new DailyBean().setContent("777777777");
-        dailyBeans.add(dailyBean7);
-        DailyBean dailyBean8 = new DailyBean().setContent("888888888");
-        dailyBeans.add(dailyBean8);
-        DailyBean dailyBean9 = new DailyBean().setContent("999999999");
-        dailyBeans.add(dailyBean9);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recycle_daily_list.setLayoutManager(linearLayoutManager);
@@ -82,5 +78,11 @@ public class DailyShowFragment extends BaseFragment {
     @Override
     public void initView() {
 
+    }
+
+    public DailyPageBean returnDailyPageBean() {
+        DailyPageBean dailyPageBean = new DailyPageBean();
+//        dailyPageBean.set
+        return dailyPageBean;
     }
 }
