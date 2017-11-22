@@ -2,16 +2,22 @@ package beini.com.dailyapp.bean;
 
 import java.util.List;
 
+import io.objectbox.annotation.Entity;
+import io.objectbox.annotation.Id;
+import io.objectbox.annotation.Relation;
+
 /**
  * Created by beini on 2017/10/19.
  */
+@Entity
 public class UserBean {
-
-    private int user_id;
+    @Id
+    private Long user_id;
     private String username;
     private String password;
     private String email;
     private int sex;
+    @Relation(idProperty = "user_id")
     private List<DailyBean> stdudents;
 
 
@@ -57,11 +63,11 @@ public class UserBean {
     }
 
 
-    public int getUser_id() {
+    public Long getUser_id() {
         return user_id;
     }
 
-    public void setUser_id(int user_id) {
+    public void setUser_id(Long user_id) {
         this.user_id = user_id;
     }
 

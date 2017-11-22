@@ -1,17 +1,33 @@
 package beini.com.dailyapp.bean;
 
+import io.objectbox.annotation.Entity;
+import io.objectbox.annotation.Id;
+
 /**
  * Created by beini on 2017/7/8.
  */
+@Entity
 public class DailyBean {
-
-    private int daily_id;
+    @Id
+    private long daily_id;
     private String title;
     private String date;
     private String content;
     private String author;
     private String picUrl;
     private int user_id;
+
+
+
+    public long getDaily_id() {
+        return daily_id;
+    }
+
+    public void setDaily_id(long daily_id) {
+        this.daily_id = daily_id;
+    }
+
+
 
 
     @Override
@@ -27,9 +43,6 @@ public class DailyBean {
                 '}';
     }
 
-    public int getDaily_id() {
-        return daily_id;
-    }
 
     public void setDaily_id(int daily_id) {
         this.daily_id = daily_id;
