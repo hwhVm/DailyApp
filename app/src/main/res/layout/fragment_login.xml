@@ -9,12 +9,15 @@
     <EditText
         android:id="@+id/et_email"
         android:layout_width="match_parent"
+        android:text="222@qq.com"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp" />
 
     <EditText
         android:id="@+id/et_password"
         android:layout_width="match_parent"
+        android:text="123456"
+        android:inputType="textPassword"
         android:layout_height="wrap_content"
         android:layout_margin="10dp" />
 
@@ -56,8 +59,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <Button
-        android:id="@+id/btn_clear"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+
 </LinearLayout>

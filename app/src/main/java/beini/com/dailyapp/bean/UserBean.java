@@ -11,7 +11,7 @@ import io.objectbox.annotation.Relation;
  */
 @Entity
 public class UserBean {
-    @Id
+    @Id(assignable = true)
     private Long user_id;
     private String username;
     private String password;

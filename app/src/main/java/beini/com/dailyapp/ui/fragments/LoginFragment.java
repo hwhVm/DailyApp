@@ -31,6 +31,7 @@ import beini.com.dailyapp.ui.presenter.UserPresenter;
 import beini.com.dailyapp.util.BLog;
 import beini.com.dailyapp.util.MD5Util;
 import beini.com.dailyapp.util.SPUtils;
+import io.objectbox.Box;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -56,6 +57,19 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
     public void initData() {
         DailyComponent build = DaggerDailyComponent.builder().dailyModule(new DailyModule()).build();
         build.inject(this);
+        //
+        Box<UserBean> userBeanBox = GlobalApplication.getInstance().getBoxStore().boxFor(UserBean.class);
+        List<UserBean> userBeans = userBeanBox.getAll();
+        UserBean userBean = null;
+        if (userBeans != null && userBeans.size() > 0) {
+            userBean = userBeans.get(userBeans.size() - 1);
+            if (userBean != null) {
+//                baseActivity.replaceFragment(DailyShowFragment.class);
+//                baseActivity.remove(LoginFragment.class);
+                login();
+            }
+
+        }
     }
 
     @Override
@@ -63,7 +77,7 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
 
     }
 
-    @Event({R.id.text_register, R.id.btn_login, R.id.btn_downfile, R.id.btn_stop_downfile, R.id.btn_clear})
+    @Event({R.id.text_register, R.id.btn_login, R.id.btn_downfile, R.id.btn_stop_downfile})
     private void mEvent(View view) {
         switch (view.getId()) {
             case R.id.btn_login:
@@ -71,7 +85,6 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
                 strorageTask();
                 break;
             case R.id.text_register:
-                BLog.e("   " + (baseActivity == null));
                 baseActivity.replaceFragment(RegisterFragment.class);
                 break;
             case R.id.btn_downfile:
@@ -80,9 +93,6 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
                 break;
             case R.id.btn_stop_downfile:
                 filePresenter.cancelDownloadFileBreakPoint();
-                break;
-            case R.id.btn_clear:
-                SPUtils.clear(GlobalApplication.getInstance().getApplicationContext());
                 break;
         }
     }
@@ -101,16 +111,8 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
     }
 
     public void login() {
-        boolean isLogin = (boolean) SPUtils.get(GlobalApplication.getInstance().getApplicationContext(), Constants.IS_LOGINED, false);
-        if (isLogin) {
-            baseActivity.replaceFragment(DailyShowFragment.class);
-        } else {
-            UserBean userBean = returnUserBean();
-            if (userBean != null) {
-                userPresenter.loginUser(userBean, this);
-            }
-        }
-
+        UserBean userBeanLogin = returnUserBean();
+        userPresenter.loginUser(userBeanLogin, this);
     }
 
     public UserBean returnUserBean() {
@@ -121,7 +123,7 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
             Toast.makeText(getActivity(), "账号不能为空", Toast.LENGTH_SHORT).show();
             return null;
         }
-        userBean.setUsername(email);
+        userBean.setEmail(email);
         if (TextUtils.isEmpty(password)) {
             Toast.makeText(getActivity(), "密码不能为空", Toast.LENGTH_SHORT).show();
             return null;
@@ -162,6 +164,7 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
     public void OnSuccess() {//登录成功
         Toast.makeText(getActivity(), "登录成功", Toast.LENGTH_SHORT).show();
         baseActivity.replaceFragment(DailyShowFragment.class);
+        baseActivity.remove(LoginFragment.class);
     }
 
     public void onFalied() {//登录失败

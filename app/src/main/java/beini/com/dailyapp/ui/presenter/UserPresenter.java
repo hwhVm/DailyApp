@@ -2,20 +2,19 @@ package beini.com.dailyapp.ui.presenter;
 
 import javax.inject.Inject;
 
-import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.bean.UserBean;
-import beini.com.dailyapp.constant.Constants;
 import beini.com.dailyapp.constant.NetConstants;
 import beini.com.dailyapp.net.response.BaseResponseJson;
+import beini.com.dailyapp.net.response.LoginResponse;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.fragments.LoginFragment;
 import beini.com.dailyapp.ui.fragments.RegisterFragment;
 import beini.com.dailyapp.ui.model.RequestModel;
+import beini.com.dailyapp.ui.model.StorageModel;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.util.BLog;
 import beini.com.dailyapp.util.GsonUtil;
-import beini.com.dailyapp.util.SPUtils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import okhttp3.ResponseBody;
@@ -28,6 +27,8 @@ public class UserPresenter {
 
     @Inject
     RequestModel requestModel;
+    @Inject
+    StorageModel storageModel;
 
     @Inject
     public UserPresenter() {
@@ -39,46 +40,31 @@ public class UserPresenter {
         requestModel.sendRequest(NetConstants.URL_REGISTER_USER, userBean, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
             @Override
             public void accept(ResponseBody responseBody) throws Exception {
-                BLog.e("  accept    ");
+                BaseResponseJson baseResponseJson = (BaseResponseJson) GsonUtil.getGsonUtil().fromJson(responseBody.string(), BaseResponseJson.class);
+                if (baseResponseJson.getReturnCode() == NetConstants.IS_SUCCESS) {
+                    registerFragment.onSuccess();
+                } else {
+                    registerFragment.onFailed();
+                }
             }
         }, new Consumer<Throwable>() {
             @Override
             public void accept(Throwable throwable) throws Exception {
                 BLog.e("   Throwable       " + throwable.getLocalizedMessage());
+                registerFragment.onFailed();
             }
         });
-//        requestModel.sendRequest(NetConstants.URL_REGISTER_USER, userBean, AndroidSchedulers.mainThread(), new FlowableSubscriber<ResponseBody>() {
-//            @Override
-//            public void onSubscribe(Subscription s) {
-//                s.request(Integer.MAX_VALUE);
-//            }
-//
-//            @Override
-//            public void onNext(ResponseBody responseBody) {
-//                BLog.e(" onNext  responseBody     ");
-//            }
-//
-//            @Override
-//            public void onError(Throwable t) {
-//                BLog.e("           " + t.getLocalizedMessage());
-//            }
-//
-//            @Override
-//            public void onComplete() {
-//                BLog.e(" onComplete  responseBody     ");
-//            }
-//        });
-
     }
 
     public void loginUser(UserBean userBean, final LoginFragment loginFragment) {
         requestModel.sendRequest(NetConstants.URL_LOGIN_USER, userBean, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
             @Override
             public void accept(ResponseBody responseBody) throws Exception {
-                BaseResponseJson baseResponseJson = (BaseResponseJson) GsonUtil.getGsonUtil().fromJson(responseBody.string(), BaseResponseJson.class);
-                if (baseResponseJson.getReturnCode() == 1) {
+                LoginResponse baseResponseJson = (LoginResponse) GsonUtil.getGsonUtil().fromJson(responseBody.string(), LoginResponse.class);
+                if (baseResponseJson.getReturnCode() == NetConstants.IS_SUCCESS) {
                     loginFragment.OnSuccess();
-                    SPUtils.put(GlobalApplication.getInstance().getApplicationContext(), Constants.IS_LOGINED, true);
+                    UserBean userBeanFromNet = baseResponseJson.getUserBean();
+                    storageModel.saveUserBeanToDb(userBeanFromNet);
                 } else {
                     loginFragment.onFalied();
                 }

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -14,6 +15,9 @@ import beini.com.dailyapp.net.progress.ProgressListener;
 import beini.com.dailyapp.util.BLog;
 import io.reactivex.Flowable;
 import okhttp3.Cache;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -50,6 +54,22 @@ public class RxNetUtil {
                 });
                 httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);//日志级别,NONE BASIC HEADERS BODY
                 //缓存
+                CookieJar cookieJar = new CookieJar() {
+                    private final HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();
+
+                    @Override
+                    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                        BLog.e("------------>saveFromResponse");
+                        cookieStore.put(url, cookies);
+                    }
+
+                    @Override
+                    public List<Cookie> loadForRequest(HttpUrl url) {
+                        BLog.e("------------>loadForRequest");
+                        List<Cookie> cookies = cookieStore.get(url);
+                        return cookies != null ? cookies : new ArrayList<Cookie>();
+                    }
+                };
                 File directory = new File(directroyCache);
                 Cache cache = new Cache(directory, maxSize);
                 OkHttpClient client = new OkHttpClient//添加头信息，cookie等
@@ -78,6 +98,7 @@ public class RxNetUtil {
 //                        .writeTimeout(8, TimeUnit.SECONDS)// 设置写入超时时间
 //                        .readTimeout(8, TimeUnit.SECONDS)// 设置读取数据超时时间
 //                        .cache(cache)
+                        .cookieJar(cookieJar)
                         .addNetworkInterceptor(new Interceptor() {
                             @Override
                             public Response intercept(Chain chain) throws IOException {

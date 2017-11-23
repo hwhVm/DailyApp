@@ -6,11 +6,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 
+import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.R;
 import beini.com.dailyapp.bean.DailyBean;
+import beini.com.dailyapp.bean.UserBean;
 import beini.com.dailyapp.bind.ContentView;
 import beini.com.dailyapp.bind.Event;
 import beini.com.dailyapp.bind.ViewInject;
@@ -18,6 +21,7 @@ import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.DailyPresenter;
+import io.objectbox.Box;
 
 
 /**
@@ -44,10 +48,12 @@ public class DailyEditFragment extends BaseFragment {
         build.inject(this);
     }
 
-    @Event({})
+    @Event({R.id.btn_commit})
     private void mEvent(View view) {
         switch (view.getId()) {
-
+            case R.id.btn_commit:
+                dailyPresenter.insertDaily(returnDailyBean(), this);
+                break;
         }
     }
 
@@ -56,7 +62,11 @@ public class DailyEditFragment extends BaseFragment {
         dailyBean.setAuthor(daily_author.getText().toString());
         dailyBean.setDate(new Date().toString());
         dailyBean.setContent(daily_content.getText().toString());
-        dailyBean.setUser_id(8);
+        Box<UserBean> userBeanBox = GlobalApplication.getInstance().getBoxStore().boxFor(UserBean.class);
+        List<UserBean> userBeans = userBeanBox.getAll();
+        if (userBeans != null && userBeans.size() > 0) {
+            dailyBean.setUser_id(userBeans.get(userBeans.size() - 1).getUser_id());
+        }
         dailyBean.setTitle(daily_title.getText().toString());
         return dailyBean;
     }
@@ -68,4 +78,6 @@ public class DailyEditFragment extends BaseFragment {
             Toast.makeText(getActivity().getApplicationContext(), getString(R.string.daily_add_failed), Toast.LENGTH_SHORT).show();
         }
     }
+
+
 }

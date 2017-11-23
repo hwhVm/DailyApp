@@ -8,15 +8,14 @@ import io.objectbox.annotation.Id;
  */
 @Entity
 public class DailyBean {
-    @Id
+    @Id(assignable = true)
     private long daily_id;
     private String title;
     private String date;
     private String content;
     private String author;
     private String picUrl;
-    private int user_id;
-
+    private long user_id;
 
 
     public long getDaily_id() {
@@ -26,8 +25,6 @@ public class DailyBean {
     public void setDaily_id(long daily_id) {
         this.daily_id = daily_id;
     }
-
-
 
 
     @Override
@@ -90,11 +87,11 @@ public class DailyBean {
         this.date = date;
     }
 
-    public int getUser_id() {
+    public long getUser_id() {
         return user_id;
     }
 
-    public void setUser_id(int user_id) {
+    public void setUser_id(long user_id) {
         this.user_id = user_id;
     }
 }

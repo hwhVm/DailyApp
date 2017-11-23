@@ -1,6 +1,7 @@
 package beini.com.dailyapp.ui.module;
 
 import beini.com.dailyapp.ui.model.RequestModel;
+import beini.com.dailyapp.ui.model.StorageModel;
 import beini.com.dailyapp.ui.presenter.DailyPresenter;
 import beini.com.dailyapp.ui.presenter.FilePresenter;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
@@ -19,11 +20,6 @@ public class DailyModule {
     }
 
     @Provides
-    public RequestModel returnDailyModel() {
-        return new RequestModel();
-    }
-
-    @Provides
     public UserPresenter returnUserPresenter() {
         return new UserPresenter();
     }
@@ -31,5 +27,15 @@ public class DailyModule {
     @Provides
     public FilePresenter returnFilePresenter() {
         return new FilePresenter();
+    }
+
+    @Provides
+    public StorageModel returnStorageModel() {
+        return new StorageModel();
+    }
+
+    @Provides
+    public RequestModel returnDailyModel() {
+        return new RequestModel();
     }
 }

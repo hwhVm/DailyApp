@@ -1,6 +1,5 @@
 package beini.com.dailyapp.util;
 
-import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -8,7 +7,10 @@ import android.app.FragmentTransaction;
 import java.util.ArrayList;
 import java.util.List;
 
+import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.R;
+import beini.com.dailyapp.ui.BaseActivity;
+import beini.com.dailyapp.ui.fragments.BaseFragment;
 
 /**
  * Created by beini on 2017/10/19.
@@ -16,9 +18,9 @@ import beini.com.dailyapp.R;
 
 public class FragmentUtil {
 
-    public  static List<String> tags = new ArrayList<>();
+    public static List<String> tags = new ArrayList<>();
     private static FragmentManager fm;
-    private static  int id=R.id.frame_layout;
+    private static int id = R.id.frame_layout;
 
     /**
      * add fragment
@@ -44,18 +46,40 @@ public class FragmentUtil {
         }
     }
 
+    private static long mLastKeyDown = 0;
+
+    public static void removePreFragment(BaseActivity baseActivity) {
+        if (tags != null && tags.size() > 1) {
+            String current = tags.get(tags.size() - 1);
+            String old = tags.get(tags.size() - 2);
+            removeFragment(fm.findFragmentByTag(current));
+            BaseFragment oldFragment = (BaseFragment) fm.findFragmentByTag(old);
+            if (oldFragment != null) {
+                showFragment(oldFragment);
+            }
+        } else {
+            ToastUtils.showShortToast(GlobalApplication.getInstance().getString(R.string.app_exit));
+            long timeMillis = System.currentTimeMillis();
+            if (timeMillis - mLastKeyDown >= 2000) {
+                mLastKeyDown = timeMillis;
+            } else {
+                System.exit(0);
+            }
+        }
+    }
+
     /**
      * remove between  fragmen
      */
-    public static void removeBetweenFragment(){
+    public static void removeBetweenFragment() {
 
     }
+
     /**
      * show fragment
      *
      * @param fragment
      */
-    @SuppressLint("ResourceType")
     public static void showFragment(Fragment fragment) {
         FragmentTransaction ft = fm.beginTransaction();
         hideAllFragment();
@@ -80,6 +104,7 @@ public class FragmentUtil {
         }
         ft.commit();
     }
+
     /**
      * remove all fragment
      */
@@ -90,12 +115,12 @@ public class FragmentUtil {
             removeFragment(fragment);
         }
     }
+
     /**
      * remove fragment
      *
      * @param fragment
      */
-    @SuppressLint("ResourceType")
     public static void removeFragment(Fragment fragment) {
         FragmentTransaction ft = fm.beginTransaction();
         if (fragment != null) {
@@ -104,7 +129,8 @@ public class FragmentUtil {
 //                        R.anim.fragment_slide_left_exit);//动画
                 ft.remove(fragment);
                 ft.commit();
-                tags.remove(tags.size() - 1);
+                int index = tags.indexOf(fragment.getClass().getName());
+                tags.remove(index);
             }
         }
     }

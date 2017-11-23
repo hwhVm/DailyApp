@@ -5,5 +5,5 @@
     <string name="daily_add_successed">add successed</string>
     <string name="daily_add_failed">add failed</string>
     <string name="daily_need_read_write_permission"> need read and write external storage permission</string>
-
+    <string name="app_exit">再按返回键退出程序</string>
 </resources>

@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import javax.inject.Inject;
@@ -19,7 +18,6 @@ import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
-import beini.com.dailyapp.util.BLog;
 
 /**
  * Create by beini 2017/10/25
@@ -103,6 +101,7 @@ public class RegisterFragment extends BaseFragment {
 
     public void onSuccess() {
         Toast.makeText(getActivity(), "注册成功", Toast.LENGTH_SHORT).show();
+        baseActivity.replaceFragment(LoginFragment.class);
     }
 
     public void onFailed() {

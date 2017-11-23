@@ -6,9 +6,10 @@ package beini.com.dailyapp.constant;
 
 public class NetConstants {
     public static String ROOT_URL = "http://10.0.0.34:8080/";
-//    public static String ROOT_URL = "https://10.0.0.40:8443/";
+    //    public static String ROOT_URL = "https://10.0.0.40:8443/";
 //    public static String ROOT_URL = "http://192.168.43.144:8080";
-
+    public final static int IS_SUCCESS = 1;
+    public final static int IS_FAILED = 0;
     //action
     public static String URL_ADD_DAILY = "addDaily";
     public static String URL_REGISTER_USER = "register";
