@@ -13,8 +13,10 @@ import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.constant.NetConstants;
 import beini.com.dailyapp.net.progress.ProgressListener;
 import beini.com.dailyapp.util.BLog;
+import beini.com.dailyapp.util.NetUtil;
 import io.reactivex.Flowable;
 import okhttp3.Cache;
+import okhttp3.CacheControl;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
@@ -22,6 +24,7 @@ import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -39,8 +42,8 @@ public class RxNetUtil {
     private static Retrofit retrofit;
     private static RxReServer rxReServer;
     private static int DEFAULT_TIMEOUT = 5;
-    private final static long maxSize = 1000L;//maxSize>0
-    private final static String directroyCache = "";//Android/data/
+    private final static long maxSize = 1024 * 1024 * 100;//maxSize>0  1024 * 1024 * 10   10M
+
 
     public static RxNetUtil getSingleton() {
         synchronized (RxNetUtil.class) {
@@ -49,66 +52,24 @@ public class RxNetUtil {
                 HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
                     @Override
                     public void log(String message) {
-                        BLog.h("      http log :  " + message);
+                        BLog.h(message);
                     }
                 });
                 httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);//日志级别,NONE BASIC HEADERS BODY
-                //缓存
-                CookieJar cookieJar = new CookieJar() {
-                    private final HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();
-
-                    @Override
-                    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                        BLog.e("------------>saveFromResponse");
-                        cookieStore.put(url, cookies);
-                    }
-
-                    @Override
-                    public List<Cookie> loadForRequest(HttpUrl url) {
-                        BLog.e("------------>loadForRequest");
-                        List<Cookie> cookies = cookieStore.get(url);
-                        return cookies != null ? cookies : new ArrayList<Cookie>();
-                    }
-                };
-                File directory = new File(directroyCache);
+                File directory = new File(NetConstants.DIRECTORY_CACHE);
                 Cache cache = new Cache(directory, maxSize);
                 OkHttpClient client = new OkHttpClient//添加头信息，cookie等
                         .Builder()
-                        // 添加通用的Header
-//                            .addInterceptor(new Interceptor() {
-//                                @Override
-//                                public okhttp3.Response intercept(Chain chain) throws IOException {
-//                                    Request.Builder builder = chain.request().newBuilder();
-//                                    builder.addHeader("token", "123");
-//                                    return chain.proceed(builder.build());
-//                                }
-//                            })
-//                        .addNetworkInterceptor(new Interceptor() {
-//                            @Override
-//                            public Response intercept(Chain chain) throws IOException {
-//                                Response originResponse = chain.proceed(chain.request());
-//                                //设置缓存时间为，并移除了pragma消息头，移除它的原因是因为pragma也是控制缓存的一个消息头属性
-//                                return originResponse.newBuilder().removeHeader("pragma")
-//                                        .header("Cache-Control", "max-age=10")//设置10秒
-//                                        .header("Cache-Control", "max-stale=30").build();
-//                            }
-//                        })
 //                      .retryOnConnectionFailure()//重试机制
                         .connectTimeout(8, TimeUnit.SECONDS) // 设置连接超时时间
-//                        .writeTimeout(8, TimeUnit.SECONDS)// 设置写入超时时间
-//                        .readTimeout(8, TimeUnit.SECONDS)// 设置读取数据超时时间
-//                        .cache(cache)
-                        .cookieJar(cookieJar)
-                        .addNetworkInterceptor(new Interceptor() {
-                            @Override
-                            public Response intercept(Chain chain) throws IOException {
-                                Response originalResponse = chain.proceed(chain.request());
-                                return originalResponse.newBuilder()
-                                        .build();
-                            }
-                        })
+//                      .writeTimeout(8, TimeUnit.SECONDS)// 设置写入超时时间
+//                      .readTimeout(8, TimeUnit.SECONDS)// 设置读取数据超时时间
+                        .cache(cache)
+//                      .cookieJar(returnCookieJar())
+//                      .addInterceptor(returnGeneralHeadInterceptor())// 添加通用的Header
+                        .addInterceptor(returnCacheInterceptor())
                         .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
-//                          .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(), SSLSocketFactoryUtils.createTrustAllManager())//信任所有证书
+//                      .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(), SSLSocketFactoryUtils.createTrustAllManager())//信任所有证书
                         .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(GlobalApplication.getInstance().getApplicationContext())
                                 , SSLSocketFactoryUtils.createTrustAllManager())
                         .hostnameVerifier(new SSLSocketFactoryUtils.TrustAllHostnameVerifier())
@@ -120,13 +81,71 @@ public class RxNetUtil {
                         .addConverterFactory(GsonConverterFactory.create())//compile 'com.squareup.retrofit2:converter-gson:2.0.2'
                         // 添加Retrofit到RxJava的转换器
                         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-//                          .addConverterFactory(ScalarsConverterFactory.create())//普通类型
+//                      .addConverterFactory(ScalarsConverterFactory.create())//普通类型
                         .build();
 
                 rxReServer = retrofit.create(RxReServer.class);
             }
         }
         return instance;
+    }
+
+    private static Interceptor returnGeneralHeadInterceptor() {
+        return new Interceptor() {
+            @Override
+            public okhttp3.Response intercept(Chain chain) throws IOException {
+                Request.Builder builder = chain.request().newBuilder();
+                builder.addHeader("token", "123");
+                return chain.proceed(builder.build());
+            }
+        };
+
+    }
+
+    private static Interceptor returnCacheInterceptor() {
+        return new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request();
+                BLog.e("------------->" + NetUtil.checkNet(GlobalApplication.getInstance().getApplicationContext()));
+                if (!NetUtil.checkNet(GlobalApplication.getInstance().getApplicationContext())) {//离线缓存控制  总的缓存时间=在线缓存时间+设置离线缓存时间
+
+                    int maxStale = 60 * 60 * 24 * 28; // 离线时缓存保存4周,单位:秒
+                    CacheControl tempCacheControl = new CacheControl.Builder()
+                            .onlyIfCached()
+                            .maxStale(maxStale, TimeUnit.SECONDS)
+                            .build();
+                    request = request.newBuilder()
+                            .cacheControl(tempCacheControl)
+                            .build();
+                }
+                return chain.proceed(request);
+            }
+        };
+    }
+
+    private static CookieJar returnCookieJar() {
+        //缓存 ,考虑到安全和不同服务器的访问，暂时不做持久化处理，仅做服务器测试。
+        return new CookieJar() {
+            private final HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();
+
+            @Override
+            public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {//服务端给客户端发送Cookie时调用
+                BLog.e("------------>saveFromResponse   url=" + url + "     cookies=" + cookies.size() + "   url.host()=" + url.host());
+                cookieStore.put(HttpUrl.parse(url.host()), cookies);
+            }
+
+            @Override
+            public List<Cookie> loadForRequest(HttpUrl url) {//发送给服务器
+                BLog.e("------------>loadForRequest   url=" + url);
+                List<Cookie> cookies = cookieStore.get(HttpUrl.parse(url.host()));
+                if (cookies == null) {
+                    BLog.e(" 没有加载 cookies ");
+                }
+                return cookies != null ? cookies : new ArrayList<Cookie>();
+            }
+        };
+
     }
 
     /**
@@ -138,7 +157,7 @@ public class RxNetUtil {
      * @throws InterruptedException
      */
     public Flowable<ResponseBody> sendRequest(@NonNull final String url, @NonNull final Object object) {
-        return rxReServer.sendRequestReturnResponseBody(url, object);
+        return rxReServer.sendRequestReturnResponseBody("public,max-age=3600", url, object);
     }
 
     /**

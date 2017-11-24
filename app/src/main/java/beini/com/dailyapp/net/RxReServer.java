@@ -32,6 +32,7 @@ public interface RxReServer {
      * get
      */
     //缓存
+
     @GET("{url}")
     Flowable<ResponseBody> requestStandardGet(@Path("url") String url, @Header("Cache-Control") String cacheControl, @Header("max-age") String maxAge);
 
@@ -51,7 +52,7 @@ public interface RxReServer {
     //json模式
     @POST("{url}")
     @NonNull
-    Flowable<ResponseBody> sendRequestReturnResponseBody(@Path("url") String url, @Body Object baseRequestJson);
+    Flowable<ResponseBody> sendRequestReturnResponseBody(@Header("Cache-Control") String str,@Path("url") String url, @Body Object baseRequestJson);
 
     //json模式 缓存
     @POST("{url}")

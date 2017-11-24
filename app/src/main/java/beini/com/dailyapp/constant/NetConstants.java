@@ -1,5 +1,7 @@
 package beini.com.dailyapp.constant;
 
+import beini.com.dailyapp.GlobalApplication;
+
 /**
  * Created by beini on 2017/2/10.
  */
@@ -10,6 +12,7 @@ public class NetConstants {
 //    public static String ROOT_URL = "http://192.168.43.144:8080";
     public final static int IS_SUCCESS = 1;
     public final static int IS_FAILED = 0;
+    public final static String DIRECTORY_CACHE = GlobalApplication.getInstance().getExternalCacheDir().getAbsolutePath();///storage/emulated/0/Android/data/com.beini/cache;
     //action
     public static String URL_ADD_DAILY = "addDaily";
     public static String URL_REGISTER_USER = "register";

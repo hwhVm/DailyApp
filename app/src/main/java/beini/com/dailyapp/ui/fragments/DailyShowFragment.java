@@ -49,11 +49,14 @@ public class DailyShowFragment extends BaseFragment {
 
     }
 
-    @Event(R.id.btn_edit)
+    @Event({R.id.btn_edit, R.id.btn_refresh})
     private void mEvent(View view) {
         switch (view.getId()) {
             case R.id.btn_edit:
                 baseActivity.replaceFragment(DailyEditFragment.class);
+                break;
+            case R.id.btn_refresh:
+                dailyPresenter.queryDailyBynum(returnDailyPageBean(), this);
                 break;
         }
     }

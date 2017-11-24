@@ -21,6 +21,8 @@ import beini.com.dailyapp.bean.DailyBean;
 
 public class DailyAdapter extends RecyclerView.Adapter<DailyAdapter.DailyHolder> {
     private List<DailyBean> dailyBeans;
+
+
     private Context context;
     private List<Integer> isCheck;
     private OnItemClickListener onItemClickListener;
