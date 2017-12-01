@@ -1,5 +1,8 @@
 package beini.com.dailyapp.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
 
@@ -7,7 +10,7 @@ import io.objectbox.annotation.Id;
  * Created by beini on 2017/7/8.
  */
 @Entity
-public class DailyBean {
+public class DailyBean implements Parcelable {
     @Id(assignable = true)
     private long daily_id;
     private String title;
@@ -93,5 +96,15 @@ public class DailyBean {
 
     public void setUser_id(long user_id) {
         this.user_id = user_id;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }

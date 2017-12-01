@@ -6,37 +6,43 @@
     tools:context=".ui.fragments.DailyEditFragment">
 
 
-    <EditText
+    <beini.com.dailyapp.ui.view.GlobalEditText
         android:id="@+id/daily_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp" />
 
-    <EditText
+    <beini.com.dailyapp.ui.view.GlobalEditText
         android:id="@+id/daily_author"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp" />
 
-    <EditText
+    <beini.com.dailyapp.ui.view.GlobalEditText
         android:id="@+id/daily_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp" />
 
 
     <ImageView
         android:id="@+id/image_upload"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp" />
 
 
-    <Button
-        android:id="@+id/btn_add_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Button
+    <beini.com.dailyapp.ui.view.GlobalButton
         android:id="@+id/btn_commit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
         android:text="commit" />
 
+    <beini.com.dailyapp.ui.view.GlobalButton
+        android:id="@+id/btn_add_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="add image" />
 </LinearLayout>

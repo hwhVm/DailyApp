@@ -1,94 +1,33 @@
 package beini.com.dailyapp.adapter;
 
-import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import beini.com.dailyapp.R;
 import beini.com.dailyapp.bean.DailyBean;
 
 /**
- * Created by beini on 2017/11/16.
+ * Created by beini on 2017/12/1.
  */
 
-public class DailyAdapter extends RecyclerView.Adapter<DailyAdapter.DailyHolder> {
+public class DailyAdapter extends BaseAdapter {
     private List<DailyBean> dailyBeans;
 
 
-    private Context context;
-    private List<Integer> isCheck;
-    private OnItemClickListener onItemClickListener;
-
-    public DailyAdapter(Context context, List<DailyBean> dailyBeans) {
-        this.context = context;
-        this.dailyBeans = dailyBeans;
-        isCheck = new ArrayList<>();
-        for (int i = 0; i < dailyBeans.size(); i++) {
-            isCheck.add(i, View.GONE);
-        }
+    public DailyAdapter(@NonNull BaseBean<DailyBean> baseBean) {
+        super(baseBean);
+        this.dailyBeans = baseBean.getBaseList();
     }
 
     @Override
-    public DailyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.layout, parent, false);
-        DailyHolder dailyHolder = new DailyHolder(view);
-        dailyHolder.setIsRecyclable(false);
-        return dailyHolder;
-    }
-
-    @Override
-    public void onBindViewHolder(final DailyHolder holder,final int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        holder.itemView.setTag(position);
         DailyBean dailyBean = dailyBeans.get(position);
-        holder.textView.setText(dailyBean.getContent());
-        holder.itemView.findViewById(R.id.iv_selected).setVisibility(isCheck.get(position));
-
-        if (onItemClickListener != null) {
-            holder.layout_content.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemClickListener.onClick(v, position);
-                }
-            });
+        getTextView((ViewHolder) holder, R.id.text_content).setText(dailyBean.getTitle());
+        if (isOpenCheck()) {
+            getImageView((ViewHolder) holder, R.id.iv_selected).setVisibility((Integer) getIsCheck().get(position));
         }
     }
-
-
-    class DailyHolder extends RecyclerView.ViewHolder {
-        TextView textView;
-        ImageView iv_selected;
-        RelativeLayout layout_content;
-
-        DailyHolder(View itemView) {
-            super(itemView);
-            textView = itemView.findViewById(R.id.text_content);
-            iv_selected = itemView.findViewById(R.id.iv_selected);
-            layout_content = itemView.findViewById(R.id.layout_content);
-        }
-    }
-
-    public interface OnItemClickListener {
-        void onClick(View v, int pos);
-    }
-
-    public void setItemClick(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
-    }
-
-    public List<Integer> getIsCheck() {
-        return isCheck;
-    }
-
-    @Override
-    public int getItemCount() {
-        return dailyBeans.size();
-    }
-
 }

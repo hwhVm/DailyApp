@@ -10,21 +10,21 @@
     <!--userBean.setSex(1);-->
     <!--userBean.setUsername("beini");-->
 
-    <EditText
+    <beini.com.dailyapp.ui.view.GlobalEditText
         android:id="@+id/et_re_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:hint="邮     箱（必填）" />
 
-    <EditText
+    <beini.com.dailyapp.ui.view.GlobalEditText
         android:id="@+id/et_re_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:hint="密     码（必填）" />
 
-    <EditText
+    <beini.com.dailyapp.ui.view.GlobalEditText
         android:id="@+id/et_re_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
             android:text="女" />
     </RadioGroup>
 
-    <Button
+    <beini.com.dailyapp.ui.view.GlobalButton
         android:id="@+id/btn_register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

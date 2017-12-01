@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -27,6 +26,7 @@ import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.DailyPresenter;
+import beini.com.dailyapp.ui.view.GlobalEditText;
 import beini.com.dailyapp.util.BitmapUtil;
 import io.objectbox.Box;
 
@@ -39,11 +39,11 @@ public class DailyEditFragment extends BaseFragment {
     @Inject
     DailyPresenter dailyPresenter;
     @ViewInject(R.id.daily_title)
-    EditText daily_title;
+    GlobalEditText daily_title;
     @ViewInject(R.id.daily_author)
-    EditText daily_author;
+    GlobalEditText daily_author;
     @ViewInject(R.id.daily_content)
-    EditText daily_content;
+    GlobalEditText daily_content;
     @ViewInject(R.id.image_upload)
     ImageView image_upload;
 
@@ -55,6 +55,11 @@ public class DailyEditFragment extends BaseFragment {
     public void initView() {
         DailyComponent build = DaggerDailyComponent.builder().dailyModule(new DailyModule()).build();
         build.inject(this);
+        //
+        DailyBean dailyBean = getArguments().getParcelable(Constants.DAILY_EDIT_DATA);
+        daily_title.setText(dailyBean.getTitle());
+        daily_author.setText(dailyBean.getAuthor());
+        daily_content.setText(dailyBean.getContent());
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)

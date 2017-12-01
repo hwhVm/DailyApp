@@ -41,6 +41,18 @@ public abstract class BaseActivity extends Activity {
         }
     }
 
+    public void replaceFragment(Class<?> fragment, Bundle args) {
+        Fragment currentFragment = customerFragmentManager.findFragmentByTag(fragment.getName());
+        if (currentFragment != null) {
+            currentFragment.setArguments(args);
+            FragmentUtil.showFragment(currentFragment);
+        } else {
+            BaseFragment baseFragment = (BaseFragment) ObjectUtil.createInstance(fragment);
+            baseFragment.setArguments(args);
+            FragmentUtil.addFragment(customerFragmentManager, baseFragment);
+        }
+    }
+
     public void remove(Class<?> fragment) {
         Fragment currentFragment = customerFragmentManager.findFragmentByTag(fragment.getName());
         FragmentUtil.removeFragment(currentFragment);

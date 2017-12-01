@@ -1,6 +1,7 @@
 package beini.com.dailyapp.ui.fragments;
 
 
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -12,17 +13,20 @@ import javax.inject.Inject;
 
 import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.R;
+import beini.com.dailyapp.adapter.BaseAdapter;
+import beini.com.dailyapp.adapter.BaseBean;
 import beini.com.dailyapp.adapter.DailyAdapter;
 import beini.com.dailyapp.bean.DailyBean;
 import beini.com.dailyapp.bean.DailyPageBean;
 import beini.com.dailyapp.bean.UserBean;
 import beini.com.dailyapp.bind.ContentView;
-import beini.com.dailyapp.bind.Event;
 import beini.com.dailyapp.bind.ViewInject;
+import beini.com.dailyapp.constant.Constants;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.DailyPresenter;
+import beini.com.dailyapp.ui.route.RouteService;
 import io.objectbox.Box;
 
 /**
@@ -32,7 +36,6 @@ import io.objectbox.Box;
 public class DailyShowFragment extends BaseFragment {
     @ViewInject(R.id.recycle_daily_list)
     RecyclerView recycle_daily_list;
-    private DailyAdapter dailyAdapter;
     @Inject
     DailyPresenter dailyPresenter;
 
@@ -49,17 +52,17 @@ public class DailyShowFragment extends BaseFragment {
 
     }
 
-    @Event({R.id.btn_edit, R.id.btn_refresh})
-    private void mEvent(View view) {
-        switch (view.getId()) {
-            case R.id.btn_edit:
-                baseActivity.replaceFragment(DailyEditFragment.class);
-                break;
-            case R.id.btn_refresh:
-                dailyPresenter.queryDailyBynum(returnDailyPageBean(), this);
-                break;
-        }
-    }
+//    @Event({R.id.btn_edit, R.id.btn_refresh})
+//    private void mEvent(View view) {
+//        switch (view.getId()) {
+//            case R.id.btn_edit:
+//                RouteService.getInstance().jumpToDailyEdit(baseActivity);
+//                break;
+//            case R.id.btn_refresh:
+//                dailyPresenter.queryDailyBynum(returnDailyPageBean(), this);
+//                break;
+//        }
+//    }
 
     public DailyPageBean returnDailyPageBean() {
         DailyPageBean dailyPageBean = new DailyPageBean();
@@ -77,37 +80,29 @@ public class DailyShowFragment extends BaseFragment {
         Toast.makeText(getActivity(), "加载失败", Toast.LENGTH_SHORT).show();
     }
 
-    public void onSuccess(List<DailyBean> dailyBeans) {
+    public void onSuccess(final List<DailyBean> dailyBeans) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        final DailyAdapter dailyAdapter = new DailyAdapter(new BaseBean<>(R.layout.item_daily, dailyBeans, true));
         recycle_daily_list.setLayoutManager(linearLayoutManager);
-        dailyAdapter = new DailyAdapter(getActivity(), dailyBeans);
         recycle_daily_list.setAdapter(dailyAdapter);
-        dailyAdapter.setItemClick(new DailyAdapter.OnItemClickListener() {
+//        dailyAdapter.setOpenCheckListener(new CheckListener() {
+//            @Override
+//            public void checked() {
+//                dailyAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void moreNum() {
+//            }
+//        });
+        dailyAdapter.setItemClick(new BaseAdapter.OnItemClickListener() {
             @Override
-            public void onClick(View v, int pos) {
-//                int num = 0;
-//                for (int i = 0, size = dailyAdapter.getIsCheck().size(); i < size; i++) {
-//                    int temp = dailyAdapter.getIsCheck().get(i);
-//                    if (temp == View.VISIBLE) {
-//                        num++;
-//                    }
-//                }
-//                if (num < 5) {
-//                    if (dailyAdapter.getIsCheck().size() > 0) {
-//                        if (dailyAdapter.getIsCheck().get(pos) == View.VISIBLE) {
-//                            dailyAdapter.getIsCheck().remove(pos);
-//                            dailyAdapter.getIsCheck().add(pos, View.GONE);
-//                        } else {
-//                            dailyAdapter.getIsCheck().remove(pos);
-//                            dailyAdapter.getIsCheck().add(pos, View.VISIBLE);
-//                        }
-//                    }
-//                    dailyAdapter.notifyDataSetChanged();
-//                } else {
-//                    BLog.e("------------>");
-//                }
-
+            public void onItemClick(View view, int position) {
+                DailyBean dailyBean = dailyBeans.get(position);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(Constants.DAILY_EDIT_DATA,dailyBean);
+                RouteService.getInstance().setArgs(bundle).jumpToDailyEdit(baseActivity, bundle);
             }
         });
     }

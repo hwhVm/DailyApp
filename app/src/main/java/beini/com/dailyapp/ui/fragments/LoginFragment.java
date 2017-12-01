@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -28,6 +27,8 @@ import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.FilePresenter;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
+import beini.com.dailyapp.ui.route.RouteService;
+import beini.com.dailyapp.ui.view.GlobalEditText;
 import beini.com.dailyapp.util.BLog;
 import beini.com.dailyapp.util.MD5Util;
 import beini.com.dailyapp.util.SPUtils;
@@ -42,9 +43,9 @@ import pub.devrel.easypermissions.EasyPermissions;
 @ContentView(R.layout.fragment_login)
 public class LoginFragment extends BaseFragment implements EasyPermissions.PermissionCallbacks {
     @ViewInject(R.id.et_email)
-    EditText et_email;
+    GlobalEditText et_email;
     @ViewInject(R.id.et_password)
-    EditText et_password;
+    GlobalEditText et_password;
     @Inject
     UserPresenter userPresenter;
     @Inject
@@ -85,7 +86,7 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
                 strorageTask();
                 break;
             case R.id.text_register:
-                baseActivity.replaceFragment(RegisterFragment.class);
+                RouteService.getInstance().jumpToRegister(baseActivity);
                 break;
             case R.id.btn_downfile:
 //                filePresenter.getFileInfo(new FileRequestBean(), this);
@@ -163,8 +164,7 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
 
     public void OnSuccess() {//登录成功
         Toast.makeText(getActivity(), "登录成功", Toast.LENGTH_SHORT).show();
-        baseActivity.replaceFragment(DailyShowFragment.class);
-        baseActivity.remove(LoginFragment.class);
+        RouteService.getInstance().jumpToDailyShow(baseActivity);
     }
 
     public void onFalied() {//登录失败

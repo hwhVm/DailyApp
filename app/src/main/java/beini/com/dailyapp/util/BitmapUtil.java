@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
 
@@ -16,6 +15,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import beini.com.dailyapp.constant.Constants;
 
 /**
  * Created by beini on 2017/11/28.
@@ -127,15 +128,9 @@ public class BitmapUtil {
         }
     }
 
-    public static void saveBitmap(Context context, Bitmap bitmap) {
-        // 首先保存图片
-        File appDir = new File(Environment.getExternalStorageDirectory(),
-                "BrotherRepair");
-        if (!appDir.exists()) {
-            appDir.mkdir();
-        }
-        String fileName = "BrotherRepair" + ".png";
-        File file = new File(appDir, fileName);
+    public static void saveBitmapToLocal(Context context, Bitmap bitmap) {
+        String tempFileName = String.valueOf(System.currentTimeMillis());
+        File file = new File(Constants.EXTEND_STORAGE_PATH, tempFileName);
         try {
             FileOutputStream fos = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
@@ -146,16 +141,15 @@ public class BitmapUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // 把文件插入到系统图库
         try {
             MediaStore.Images.Media.insertImage(context.getContentResolver(),
-                    file.getAbsolutePath(), fileName, null);
+                    file.getAbsolutePath(), tempFileName, null);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        // 通知图库更新
         context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                 Uri.parse("file://" + "/sdcard/namecard/")));
+        file.delete();
     }
 
 }

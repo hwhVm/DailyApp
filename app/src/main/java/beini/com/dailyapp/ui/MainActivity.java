@@ -1,11 +1,11 @@
 package beini.com.dailyapp.ui;
 
-import beini.com.dailyapp.ui.fragments.DailyEditFragment;
+import beini.com.dailyapp.ui.route.RouteService;
 
 public class MainActivity extends BaseActivity {
 
     @Override
     public void initView() {
-        replaceFragment(DailyEditFragment.class);
+        RouteService.getInstance().jumpToLogin(this);
     }
 }

@@ -3,7 +3,6 @@ package beini.com.dailyapp.ui.fragments;
 
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -18,6 +17,8 @@ import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
+import beini.com.dailyapp.ui.route.RouteService;
+import beini.com.dailyapp.ui.view.GlobalEditText;
 
 /**
  * Create by beini 2017/10/25
@@ -27,11 +28,11 @@ public class RegisterFragment extends BaseFragment {
     @Inject
     UserPresenter userPresenter;
     @ViewInject(R.id.et_re_email)
-    EditText et_re_email;
+    GlobalEditText et_re_email;
     @ViewInject(R.id.et_re_password)
-    EditText et_re_password;
+    GlobalEditText et_re_password;
     @ViewInject(R.id.et_re_username)
-    EditText et_re_username;
+    GlobalEditText et_re_username;
     @ViewInject(R.id.rb_main)
     RadioButton rb_main;
     @ViewInject(R.id.rb_woman)
@@ -101,11 +102,11 @@ public class RegisterFragment extends BaseFragment {
 
     public void onSuccess() {
         Toast.makeText(getActivity(), "注册成功", Toast.LENGTH_SHORT).show();
-        baseActivity.replaceFragment(LoginFragment.class);
+        RouteService.getInstance().finishCurrentFragment(baseActivity, RegisterFragment.class);
     }
 
     public void onFailed() {
-        Toast.makeText(getActivity(), "注册成功", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "注册失败", Toast.LENGTH_SHORT).show();
     }
 
 }

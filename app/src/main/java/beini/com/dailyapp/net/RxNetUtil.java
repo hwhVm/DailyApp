@@ -67,7 +67,7 @@ public class RxNetUtil {
                         .cache(cache)
 //                      .cookieJar(returnCookieJar())
 //                      .addInterceptor(returnGeneralHeadInterceptor())// 添加通用的Header
-                        .addInterceptor(returnCacheInterceptor())
+//                        .addInterceptor(returnCacheInterceptor())
                         .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
 //                      .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(), SSLSocketFactoryUtils.createTrustAllManager())//信任所有证书
                         .sslSocketFactory(SSLSocketFactoryUtils.createSSLSocketFactory(GlobalApplication.getInstance().getApplicationContext())
@@ -107,7 +107,7 @@ public class RxNetUtil {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 Request request = chain.request();
-                BLog.e("------------->" + NetUtil.checkNet(GlobalApplication.getInstance().getApplicationContext()));
+//                BLog.e("------------->" + NetUtil.checkNet(GlobalApplication.getInstance().getApplicationContext()));
                 if (!NetUtil.checkNet(GlobalApplication.getInstance().getApplicationContext())) {//离线缓存控制  总的缓存时间=在线缓存时间+设置离线缓存时间
 
                     int maxStale = 60 * 60 * 24 * 28; // 离线时缓存保存4周,单位:秒

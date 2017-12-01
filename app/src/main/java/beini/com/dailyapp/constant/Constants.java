@@ -11,4 +11,5 @@ public class Constants {
     public static String DEMO_RANGE = "DEMO_RANGE";
     public static String EXTEND_STORAGE_PATH = Environment.getExternalStorageDirectory() + "/";
     public static final int READ_EXTERNAL_STORAGE = 123;
+    public static final String DAILY_EDIT_DATA = "DAILY_EDIT_DATA";
 }
