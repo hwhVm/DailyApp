@@ -1,14 +1,22 @@
 package beini.com.dailyapp.ui.fragments;
 
 
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
+import android.graphics.BitmapFactory;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.zhihu.matisse.Matisse;
+import com.zhihu.matisse.MimeType;
+import com.zhihu.matisse.engine.impl.GlideEngine;
+import com.zhihu.matisse.filter.Filter;
+
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,73 +24,136 @@ import javax.inject.Inject;
 
 import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.R;
+import beini.com.dailyapp.adapter.BaseAdapter;
+import beini.com.dailyapp.adapter.BaseBean;
+import beini.com.dailyapp.adapter.GalleryAdapter;
 import beini.com.dailyapp.bean.DailyBean;
 import beini.com.dailyapp.bean.UserBean;
 import beini.com.dailyapp.bind.ContentView;
 import beini.com.dailyapp.bind.Event;
 import beini.com.dailyapp.bind.ViewInject;
 import beini.com.dailyapp.constant.Constants;
+import beini.com.dailyapp.constant.NetConstants;
+import beini.com.dailyapp.net.response.FileResponse;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.DailyPresenter;
+import beini.com.dailyapp.ui.presenter.FilePresenter;
 import beini.com.dailyapp.ui.view.GlobalEditText;
-import beini.com.dailyapp.util.BitmapUtil;
+import beini.com.dailyapp.util.ActivityResultListener;
+import beini.com.dailyapp.util.BLog;
+import beini.com.dailyapp.util.GifSizeFilter;
+import beini.com.dailyapp.util.MD5Util;
+import beini.com.dailyapp.util.StringUtil;
 import io.objectbox.Box;
+
+import static android.app.Activity.RESULT_OK;
 
 
 /**
  * Create by beini 2017/10/19
  */
 @ContentView(R.layout.fragment_daily_edit)
-public class DailyEditFragment extends BaseFragment {
+public class DailyEditFragment extends BaseFragment implements ActivityResultListener {
     @Inject
     DailyPresenter dailyPresenter;
+    @Inject
+    FilePresenter filePresenter;
+
     @ViewInject(R.id.daily_title)
     GlobalEditText daily_title;
     @ViewInject(R.id.daily_author)
     GlobalEditText daily_author;
     @ViewInject(R.id.daily_content)
     GlobalEditText daily_content;
-    @ViewInject(R.id.image_upload)
-    ImageView image_upload;
+    @ViewInject(R.id.recycle_gallery)
+    RecyclerView recycle_gallery;
+    private GalleryAdapter galleryAdapter;
+    private List<Bitmap> bitmaps;
+    private int REQUEST_GALLERY = 111;
 
     public void initData() {
 
     }
 
+
     @Override
     public void initView() {
         DailyComponent build = DaggerDailyComponent.builder().dailyModule(new DailyModule()).build();
         build.inject(this);
-        //
+
         DailyBean dailyBean = getArguments().getParcelable(Constants.DAILY_EDIT_DATA);
         daily_title.setText(dailyBean.getTitle());
         daily_author.setText(dailyBean.getAuthor());
         daily_content.setText(dailyBean.getContent());
+        baseActivity.setActivityResultListener(this);
+
+        bitmaps = new ArrayList<>();
+        bitmaps.add(BitmapFactory.decodeResource(getResources(), R.mipmap.icon_addx));
+
+        GridLayoutManager linearLayoutManager = new GridLayoutManager(getActivity(), 3);
+        galleryAdapter = new GalleryAdapter(new BaseBean<>(R.layout.item_gallery, bitmaps));
+        recycle_gallery.setLayoutManager(linearLayoutManager);
+        recycle_gallery.setAdapter(galleryAdapter);
+        galleryAdapter.setItemClick(onItemClickListener);
+        galleryAdapter.setOnItemLongClickListener(onItemLongClickListener);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Event({R.id.btn_commit, R.id.btn_add_image})
+    BaseAdapter.onItemLongClickListener onItemLongClickListener = new BaseAdapter.onItemLongClickListener() {
+        @Override
+        public void onItemLongClick(View view, int position) {
+            if (bitmaps.size() > 1) {
+                bitmaps.remove(position);
+                pathsSum.remove(position);
+                galleryAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+
+    BaseAdapter.OnItemClickListener onItemClickListener = new BaseAdapter.OnItemClickListener() {
+        @Override
+        public void onItemClick(View view, int position) {
+
+            if (position == (bitmaps.size() - 1)) {//最后一个
+                Matisse.from(getActivity())
+                        .choose(MimeType.ofAll(), true)//// 选择 mime 的类型
+                        .countable(true)
+                        .maxSelectable(6 - bitmaps.size() + 1)// 图片选择的最多数量
+                        .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
+                        .gridExpectedSize(getResources().getDimensionPixelSize(R.dimen.grid_expected_size))
+                        .restrictOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+                        .thumbnailScale(0.85f)// 缩略图的比例
+                        .imageEngine(new GlideEngine())// 使用的图片加载引擎 GlideEngine
+                        .forResult(REQUEST_GALLERY);//// 设置作为标记的请求码}
+            }
+
+        }
+    };
+
+    @Event({R.id.btn_commit})
     private void mEvent(View view) {
         switch (view.getId()) {
             case R.id.btn_commit:
-                dailyPresenter.insertDaily(returnDailyBean(), this);
-                break;
-            case R.id.btn_add_image:
-                String filePaht = "file:" + Constants.EXTEND_STORAGE_PATH + "a.jpg";
-                //"http://imgsrc.baidu.com/imgad/pic/item/0df431adcbef760991443cbb24dda3cc7cd99e43.jpg"
-//                Bitmap bitmap = BitmapUtil.getBitmapFromStorage(filePaht, 4);
-//                BitmapUtil.getInfoFromImage(filePaht);
-//                BLog.e("----------->bitmap.getConfig()=" + bitmap.getConfig() + "   bitmap.getAllocationByteCount()= " + bitmap.getAllocationByteCount());
-//                image_upload.setImageBitmap(bitmap);
-                Bitmap bitmap = BitmapUtil.getBitmapByUri(getActivity(), Uri.parse(filePaht));
-                //
-                String strBase64 = BitmapUtil.convertBitmapToBase64(bitmap);
-                Bitmap bitmapTemp = BitmapUtil.convertBase64ToBitmap(strBase64);
-                image_upload.setImageBitmap(bitmapTemp);
+                List<File> files = new ArrayList<>();
+                for (int i = 0; i < pathsSum.size(); i++) {
+                    File oldFile = new File(pathsSum.get(i));
+                    File newFile = new File(NetConstants.DIRECTORY_CACHE + "/" + MD5Util.file2Md5(oldFile) + StringUtil.returnStr(oldFile.getName()));
+                    BLog.e("         " + newFile.getName());
+                    oldFile.renameTo(newFile);
+                    files.add(newFile);
+                    newFile.delete();
+                }
+                BLog.e("------------->" + files.size());
+                filePresenter.uploadMultiFile(files, this);
                 break;
         }
+    }
+
+    public void insertDaily(FileResponse fileResponse) {
+        DailyBean dailyBean = returnDailyBean();
+        dailyBean.setPicUrl(fileResponse.getFileId());
+        dailyPresenter.insertDaily(dailyBean, this);
     }
 
     public DailyBean returnDailyBean() {
@@ -107,5 +178,31 @@ public class DailyEditFragment extends BaseFragment {
         }
     }
 
+    private List<String> pathsSum = new ArrayList<>();
+
+    @Override
+    public void resultCallback(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_GALLERY && resultCode == RESULT_OK) {
+//          List<Uri> mSelected = Matisse.obtainResult(data);
+            List<String> paths = Matisse.obtainPathResult(data);
+            bitmaps.remove(bitmaps.size() - 1);
+            for (int i = 0; i < paths.size(); i++) {
+                String path = paths.get(i);
+                BLog.e("  path=" + path + "         " + (!pathsSum.contains(path)));
+                File file = new File(path);
+                BLog.e("-------->file.exists()=" + file.exists());
+                if (!pathsSum.contains(path) && file.exists()) {
+                    Bitmap bitmap = BitmapFactory.decodeFile(path);
+                    bitmaps.add(bitmap);
+                    pathsSum.add(path);
+                }
+            }
+            if (bitmaps.size() < 6) {
+                bitmaps.add(BitmapFactory.decodeResource(getResources(), R.mipmap.icon_addx));
+            }
+            galleryAdapter.notifyDataSetChanged();
+        }
+
+    }
 
 }

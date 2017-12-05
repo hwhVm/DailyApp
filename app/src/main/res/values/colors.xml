@@ -3,8 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
     <color name="color_widget_backgound">#3984FF</color>
-    <color name="color_app_backgound">#2B2B2B</color>
+    <color name="color_app_backgound">#828282</color>
     <color name="color_white">#FFFFFF</color>
-    <color name="color_toolbar">#31373C</color>
+    <color name="color_toolbar">#3984FF</color>
+    <color name="color_gray">#828282</color>
 </resources>

@@ -1,48 +1,58 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".ui.fragments.DailyEditFragment">
+    android:layout_height="match_parent">
 
-
-    <beini.com.dailyapp.ui.view.GlobalEditText
-        android:id="@+id/daily_title"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".ui.fragments.DailyEditFragment">
 
-    <beini.com.dailyapp.ui.view.GlobalEditText
-        android:id="@+id/daily_author"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp" />
+        <beini.com.dailyapp.ui.view.GlobalEditText
+            android:id="@+id/daily_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="15dp"
+            android:paddingLeft="15dp" />
 
-    <beini.com.dailyapp.ui.view.GlobalEditText
-        android:id="@+id/daily_content"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp" />
+        <beini.com.dailyapp.ui.view.GlobalEditText
+            android:id="@+id/daily_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="15dp"
+            android:paddingLeft="15dp" />
 
+        <beini.com.dailyapp.ui.view.GlobalEditText
+            android:id="@+id/daily_content"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="15dp"
+            android:gravity="left"
+            android:maxLines="20"
+            android:paddingLeft="15dp" />
 
-    <ImageView
-        android:id="@+id/image_upload"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycle_gallery"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp" />
 
+        <beini.com.dailyapp.ui.view.GlobalButton
+            android:id="@+id/btn_commit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="35dp"
+            android:text="commit" />
 
-    <beini.com.dailyapp.ui.view.GlobalButton
-        android:id="@+id/btn_commit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="35dp"
-        android:text="commit" />
-
-    <beini.com.dailyapp.ui.view.GlobalButton
-        android:id="@+id/btn_add_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:text="add image" />
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

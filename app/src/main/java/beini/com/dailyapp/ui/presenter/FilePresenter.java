@@ -6,7 +6,6 @@ import android.widget.ProgressBar;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -17,8 +16,10 @@ import beini.com.dailyapp.constant.Constants;
 import beini.com.dailyapp.constant.NetConstants;
 import beini.com.dailyapp.net.progress.CusNetworkInterceptor;
 import beini.com.dailyapp.net.progress.ProgressListener;
+import beini.com.dailyapp.net.response.FileResponse;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
+import beini.com.dailyapp.ui.fragments.DailyEditFragment;
 import beini.com.dailyapp.ui.fragments.LoginFragment;
 import beini.com.dailyapp.ui.fragments.RegisterFragment;
 import beini.com.dailyapp.ui.model.RequestModel;
@@ -66,23 +67,18 @@ public class FilePresenter {
         });
     }
 
-    public void uploadMultiFile(final RegisterFragment registerFragment) {
-        List<File> files = new ArrayList<>();
-        String path1 = Environment.getExternalStorageDirectory() + File.separator + "aa.xml";
-        File file1 = new File(path1);
-        String path2 = Environment.getExternalStorageDirectory() + File.separator + "bb.ver";
-        File file2 = new File(path2);
-        files.add(file1);
-        files.add(file2);
+    public void uploadMultiFile(List<File> files, final DailyEditFragment dailyEditFragment) {
+
         requestModel.uploadMultiFile(NetConstants.URL_UPLOAD_MULTI_FILE, files, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
             @Override
             public void accept(ResponseBody responseBody) throws Exception {
-
+                FileResponse fileResponse = (FileResponse) GsonUtil.getGsonUtil().fromJson(responseBody.string(), FileResponse.class);
+                dailyEditFragment.insertDaily(fileResponse);
             }
         }, new Consumer<Throwable>() {
             @Override
             public void accept(Throwable throwable) throws Exception {
-
+                BLog.e(" uploadMultiFile  throwable= " + throwable.getLocalizedMessage());
             }
         });
 

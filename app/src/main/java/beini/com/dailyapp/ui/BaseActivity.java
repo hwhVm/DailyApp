@@ -3,6 +3,7 @@ package beini.com.dailyapp.ui;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 
@@ -10,6 +11,7 @@ import beini.com.dailyapp.R;
 import beini.com.dailyapp.bind.ContentView;
 import beini.com.dailyapp.bind.ViewInjectorImpl;
 import beini.com.dailyapp.ui.fragments.BaseFragment;
+import beini.com.dailyapp.util.ActivityResultListener;
 import beini.com.dailyapp.util.FragmentUtil;
 import beini.com.dailyapp.util.KeyBackListener;
 import beini.com.dailyapp.util.ObjectUtil;
@@ -19,7 +21,7 @@ public abstract class BaseActivity extends Activity {
 
     private FragmentManager customerFragmentManager;
     private KeyBackListener keyBackListener;
-
+    private ActivityResultListener activityResultListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +82,14 @@ public abstract class BaseActivity extends Activity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (activityResultListener != null) {
+            activityResultListener.resultCallback(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         FragmentUtil.removePreFragment(this);
     }
@@ -92,4 +102,14 @@ public abstract class BaseActivity extends Activity {
     public void setKeyBackListener(KeyBackListener keyBackListener) {
         this.keyBackListener = keyBackListener;
     }
+
+
+    public ActivityResultListener getActivityResultListener() {
+        return activityResultListener;
+    }
+
+    public void setActivityResultListener(ActivityResultListener activityResultListener) {
+        this.activityResultListener = activityResultListener;
+    }
+
 }
