@@ -10,7 +10,8 @@ public class FileResponse extends BaseResponseJson {
         return fileId;
     }
 
-    public void setFileId(String fileId) {
+    public FileResponse setFileId(String fileId) {
         this.fileId = fileId;
+        return this;
     }
 }

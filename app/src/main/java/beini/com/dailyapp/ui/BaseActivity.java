@@ -4,11 +4,16 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toolbar;
 
 import beini.com.dailyapp.R;
 import beini.com.dailyapp.bind.ContentView;
+import beini.com.dailyapp.bind.ViewInject;
 import beini.com.dailyapp.bind.ViewInjectorImpl;
 import beini.com.dailyapp.ui.fragments.BaseFragment;
 import beini.com.dailyapp.util.ActivityResultListener;
@@ -22,6 +27,10 @@ public abstract class BaseActivity extends Activity {
     private FragmentManager customerFragmentManager;
     private KeyBackListener keyBackListener;
     private ActivityResultListener activityResultListener;
+    @ViewInject(R.id.image_base_add)
+    ImageView image_base_add;
+    @ViewInject(R.id.global_toolbar)
+    Toolbar global_toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +119,22 @@ public abstract class BaseActivity extends Activity {
 
     public void setActivityResultListener(ActivityResultListener activityResultListener) {
         this.activityResultListener = activityResultListener;
+    }
+
+    public void setAddVisibility(int visibility) {
+        image_base_add.setVisibility(visibility);
+    }
+
+    public void setAddImageDrawable(Drawable drawable) {
+        image_base_add.setImageDrawable(drawable);
+    }
+
+    public void setAddOnClickListener(View.OnClickListener onClickListener) {
+        image_base_add.setOnClickListener(onClickListener);
+    }
+
+    public void setToolBarVisibility(int visibility) {
+        global_toolbar.setVisibility(visibility);
     }
 
 }

@@ -17,7 +17,6 @@ import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
-import beini.com.dailyapp.ui.route.RouteService;
 import beini.com.dailyapp.ui.view.GlobalEditText;
 
 /**
@@ -102,7 +101,7 @@ public class RegisterFragment extends BaseFragment {
 
     public void onSuccess() {
         Toast.makeText(getActivity(), "注册成功", Toast.LENGTH_SHORT).show();
-        RouteService.getInstance().finishCurrentFragment(baseActivity, RegisterFragment.class);
+        baseActivity.back();
     }
 
     public void onFailed() {

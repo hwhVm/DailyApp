@@ -24,7 +24,6 @@ import javax.inject.Inject;
 
 import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.R;
-import beini.com.dailyapp.adapter.BaseAdapter;
 import beini.com.dailyapp.adapter.BaseBean;
 import beini.com.dailyapp.adapter.GalleryAdapter;
 import beini.com.dailyapp.bean.DailyBean;
@@ -82,11 +81,12 @@ public class DailyEditFragment extends BaseFragment implements ActivityResultLis
     public void initView() {
         DailyComponent build = DaggerDailyComponent.builder().dailyModule(new DailyModule()).build();
         build.inject(this);
-
-        DailyBean dailyBean = getArguments().getParcelable(Constants.DAILY_EDIT_DATA);
-        daily_title.setText(dailyBean.getTitle());
-        daily_author.setText(dailyBean.getAuthor());
-        daily_content.setText(dailyBean.getContent());
+        if (getArguments() != null) {
+            DailyBean dailyBean = getArguments().getParcelable(Constants.DAILY_EDIT_DATA);
+            daily_title.setText(dailyBean.getTitle());
+            daily_author.setText(dailyBean.getAuthor());
+            daily_content.setText(dailyBean.getContent());
+        }
         baseActivity.setActivityResultListener(this);
 
         bitmaps = new ArrayList<>();
@@ -96,25 +96,7 @@ public class DailyEditFragment extends BaseFragment implements ActivityResultLis
         galleryAdapter = new GalleryAdapter(new BaseBean<>(R.layout.item_gallery, bitmaps));
         recycle_gallery.setLayoutManager(linearLayoutManager);
         recycle_gallery.setAdapter(galleryAdapter);
-        galleryAdapter.setItemClick(onItemClickListener);
-        galleryAdapter.setOnItemLongClickListener(onItemLongClickListener);
-    }
-
-    BaseAdapter.onItemLongClickListener onItemLongClickListener = new BaseAdapter.onItemLongClickListener() {
-        @Override
-        public void onItemLongClick(View view, int position) {
-            if (bitmaps.size() > 1) {
-                bitmaps.remove(position);
-                pathsSum.remove(position);
-                galleryAdapter.notifyDataSetChanged();
-            }
-        }
-    };
-
-    BaseAdapter.OnItemClickListener onItemClickListener = new BaseAdapter.OnItemClickListener() {
-        @Override
-        public void onItemClick(View view, int position) {
-
+        galleryAdapter.setItemClick(((view, position) -> {
             if (position == (bitmaps.size() - 1)) {//最后一个
                 Matisse.from(getActivity())
                         .choose(MimeType.ofAll(), true)//// 选择 mime 的类型
@@ -128,24 +110,35 @@ public class DailyEditFragment extends BaseFragment implements ActivityResultLis
                         .forResult(REQUEST_GALLERY);//// 设置作为标记的请求码}
             }
 
-        }
-    };
+        }));
+        galleryAdapter.setOnItemLongClickListener(((view, position) -> {
+            if (bitmaps.size() > 1) {
+                bitmaps.remove(position);
+                pathsSum.remove(position);
+                galleryAdapter.notifyDataSetChanged();
+            }
+        }));
+    }
 
     @Event({R.id.btn_commit})
     private void mEvent(View view) {
         switch (view.getId()) {
             case R.id.btn_commit:
-                List<File> files = new ArrayList<>();
-                for (int i = 0; i < pathsSum.size(); i++) {
-                    File oldFile = new File(pathsSum.get(i));
-                    File newFile = new File(NetConstants.DIRECTORY_CACHE + "/" + MD5Util.file2Md5(oldFile) + StringUtil.returnStr(oldFile.getName()));
-                    BLog.e("         " + newFile.getName());
-                    oldFile.renameTo(newFile);
-                    files.add(newFile);
-                    newFile.delete();
+                BLog.e("------------->pathsSum.size()=" + pathsSum.size());
+                if (pathsSum.size() == 1) {
+                    List<File> files = new ArrayList<>();
+                    for (int i = 0; i < pathsSum.size(); i++) {
+                        File oldFile = new File(pathsSum.get(i));
+                        File newFile = new File(NetConstants.DIRECTORY_CACHE + "/" + MD5Util.file2Md5(oldFile) + StringUtil.returnStr(oldFile.getName()));
+                        BLog.e("         " + newFile.getName());
+                        oldFile.renameTo(newFile);
+                        files.add(newFile);
+                        newFile.delete();
+                    }
+                    filePresenter.uploadMultiFile(files, this);
+                } else {
+                    insertDaily(new FileResponse().setFileId(""));
                 }
-                BLog.e("------------->" + files.size());
-                filePresenter.uploadMultiFile(files, this);
                 break;
         }
     }
@@ -186,6 +179,7 @@ public class DailyEditFragment extends BaseFragment implements ActivityResultLis
 //          List<Uri> mSelected = Matisse.obtainResult(data);
             List<String> paths = Matisse.obtainPathResult(data);
             bitmaps.remove(bitmaps.size() - 1);
+
             for (int i = 0; i < paths.size(); i++) {
                 String path = paths.get(i);
                 BLog.e("  path=" + path + "         " + (!pathsSum.contains(path)));

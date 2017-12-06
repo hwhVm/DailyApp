@@ -17,13 +17,10 @@ import io.reactivex.schedulers.Schedulers;
 public class StorageModel {
 
     public void saveUserBeanToDb(UserBean userBeanFromNet) {
-        Flowable.just(userBeanFromNet).observeOn(Schedulers.io()).map(new Function<UserBean, Object>() {
-            @Override
-            public Object apply(UserBean userBean) throws Exception {
-                Box<UserBean> userBeanBox = GlobalApplication.getInstance().getBoxStore().boxFor(UserBean.class);
-                userBeanBox.put(userBean);
-                return true;
-            }
+        Flowable.just(userBeanFromNet).observeOn(Schedulers.io()).map((Function<UserBean, Object>) userBean -> {
+            Box<UserBean> userBeanBox = GlobalApplication.getInstance().getBoxStore().boxFor(UserBean.class);
+            userBeanBox.put(userBean);
+            return true;
         }).subscribe();
     }
 

@@ -28,22 +28,18 @@ public class RouteService {
         baseActivity.replaceFragment(LoginFragment.class);
     }
 
-    public void jumpToDailyEdit(BaseActivity baseActivity, Bundle args) {
-        baseActivity.replaceFragment(DailyEditFragment.class, args);
+    public void jumpToDailyEdit(BaseActivity baseActivity) {
+        baseActivity.replaceFragment(DailyEditFragment.class, getArgs());
     }
 
 
     public void jumpToDailyShow(BaseActivity baseActivity) {
-        baseActivity.replaceFragment(DailyShowFragment.class);
         baseActivity.remove(LoginFragment.class);
+        baseActivity.replaceFragment(DailyShowFragment.class);
     }
 
     public void jumpToRegister(BaseActivity baseActivity) {
         baseActivity.replaceFragment(RegisterFragment.class);
-    }
-
-    public void finishCurrentFragment(BaseActivity baseActivity, Class tClass) {
-        baseActivity.remove(tClass);
     }
 
     /**

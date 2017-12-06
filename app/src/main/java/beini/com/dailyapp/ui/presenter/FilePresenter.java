@@ -4,7 +4,6 @@ import android.os.Environment;
 import android.widget.ProgressBar;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -28,11 +27,8 @@ import beini.com.dailyapp.util.BLog;
 import beini.com.dailyapp.util.FileUtil;
 import beini.com.dailyapp.util.GsonUtil;
 import beini.com.dailyapp.util.SPUtils;
-import io.reactivex.FlowableEmitter;
-import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import okhttp3.ResponseBody;
 
 /**
@@ -54,12 +50,7 @@ public class FilePresenter {
         String path1 = Environment.getExternalStorageDirectory() + File.separator + "0.zip";
         File file = new File(path1);
         BLog.e("    file.exists()=" + file.exists());
-        requestModel.uploadSingleFile(NetConstants.URL_UPLOAD_SINGLE_FILE, file, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
-            @Override
-            public void accept(ResponseBody responseBody) throws Exception {
-                BLog.e("  uploadSingleFile ");
-            }
-        }, new Consumer<Throwable>() {
+        requestModel.uploadSingleFile(NetConstants.URL_UPLOAD_SINGLE_FILE, file, AndroidSchedulers.mainThread(), responseBody -> BLog.e("  uploadSingleFile "), new Consumer<Throwable>() {
             @Override
             public void accept(Throwable throwable) throws Exception {
                 BLog.e("   throwable=" + throwable.getLocalizedMessage());
@@ -75,77 +66,44 @@ public class FilePresenter {
                 FileResponse fileResponse = (FileResponse) GsonUtil.getGsonUtil().fromJson(responseBody.string(), FileResponse.class);
                 dailyEditFragment.insertDaily(fileResponse);
             }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                BLog.e(" uploadMultiFile  throwable= " + throwable.getLocalizedMessage());
-            }
-        });
+        }, throwable -> BLog.e(" uploadMultiFile  throwable= " + throwable.getLocalizedMessage()));
 
     }
 
     public void uploadSingleFileProcess(final RegisterFragment registerFragment) {
         requestModel.uploadSingleFileProcess(NetConstants.URL_UPLOAD_SINGLE_FILE, AndroidSchedulers.mainThread(),
-                new FlowableOnSubscribe<File>() {
-                    @Override
-                    public void subscribe(FlowableEmitter<File> e) throws Exception {
-                        String path = Environment.getExternalStorageDirectory() + File.separator + "aa.xml";
-                        File file = new File(path);
-                        e.onNext(file);
-                        e.onComplete();
-                    }
+                e -> {
+                    String path = Environment.getExternalStorageDirectory() + File.separator + "aa.xml";
+                    File file = new File(path);
+                    e.onNext(file);
+                    e.onComplete();
                 },
-                new Consumer<ResponseBody>() {
-                    @Override
-                    public void accept(ResponseBody responseBody) {
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
+                responseBody -> {
+                }, throwable -> {
 
-                    }
                 });
 
     }
 
     public void downloadFile(String url) {
         requestModel.downloadFile(url,
-                new Function<ResponseBody, Boolean>() {
-                    @Override
-                    public Boolean apply(ResponseBody responseBody) throws IOException {
-                        FileUtil.writeBytesToSD(Environment.getExternalStorageDirectory() + "/mm.mp3", responseBody.bytes());
-                        return true;
-                    }
-                }, new Consumer<Boolean>() {
-                    @Override
-                    public void accept(Boolean aBoolean) {
-                        BLog.e(" aBoolean = " + aBoolean);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) {
-                        BLog.e("    downloadFile        throwable=" + throwable.getLocalizedMessage());
-                    }
-                });
+                responseBody -> {
+                    FileUtil.writeBytesToSD(Environment.getExternalStorageDirectory() + "/mm.mp3", responseBody.bytes());
+                    return true;
+                }, aBoolean -> BLog.e(" aBoolean = " + aBoolean), throwable -> BLog.e("    downloadFile        throwable=" + throwable.getLocalizedMessage()));
 
     }
 
     public void getFileInfo(FileRequestBean fileRequestBean, final LoginFragment loginFragment) {
         requestModel.sendRequest(NetConstants.URL_GET_FILE_INFO, fileRequestBean, AndroidSchedulers.mainThread(),
-                new Consumer<ResponseBody>() {
-                    @Override
-                    public void accept(ResponseBody responseBody) throws Exception {
-                        String string = responseBody.string();
-                        FileRequestBean fileRequestBean1 = (FileRequestBean) GsonUtil.getGsonUtil().fromJson(string, FileRequestBean.class);
-                        loginFragment.onStartDownload(fileRequestBean1);
-                    }
+                responseBody -> {
+                    String string = responseBody.string();
+                    FileRequestBean fileRequestBean1 = (FileRequestBean) GsonUtil.getGsonUtil().fromJson(string, FileRequestBean.class);
+                    loginFragment.onStartDownload(fileRequestBean1);
                 },
-                new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        BLog.e("        throwable=" + throwable);
-                        loginFragment.onFailedDownload();
-                    }
+                throwable -> {
+                    BLog.e("        throwable=" + throwable);
+                    loginFragment.onFailedDownload();
                 });
     }
 
@@ -177,27 +135,20 @@ public class FilePresenter {
             public void onError(Exception e) {
 
             }
-        }), new Consumer<ResponseBody>() {
-            @Override
-            public void accept(ResponseBody responseBody) throws Exception {
-                long range = Long.parseLong(fileRequestBean.getRange());
-                InputStream inputStream = responseBody.byteStream();
-                if (range > 0 && range < fileRequestBean.getFileSize()) {
-                    FileUtil.writeInputStreamToSD(Constants.EXTEND_STORAGE_PATH + "temp.zip", inputStream);//一般文件有个唯一的id
-                    FileUtil.appendFile(Constants.EXTEND_STORAGE_PATH + "sum.zip", Constants.EXTEND_STORAGE_PATH + "temp.zip");
-                    File file = new File(Constants.EXTEND_STORAGE_PATH + "temp.zip");
-                    file.delete();
-                } else {
-                    FileUtil.writeInputStreamToSD(Constants.EXTEND_STORAGE_PATH + "sum.zip", inputStream);//一般文件有个唯一的id
-                }
-                File file = new File(Constants.EXTEND_STORAGE_PATH + "sum.zip");
-                SPUtils.put(GlobalApplication.getInstance().getApplicationContext(), Constants.DEMO_RANGE, file.length());
+        }), responseBody -> {
+            long range = Long.parseLong(fileRequestBean.getRange());
+            InputStream inputStream = responseBody.byteStream();
+            if (range > 0 && range < fileRequestBean.getFileSize()) {
+                FileUtil.writeInputStreamToSD(Constants.EXTEND_STORAGE_PATH + "temp.zip", inputStream);//一般文件有个唯一的id
+                FileUtil.appendFile(Constants.EXTEND_STORAGE_PATH + "sum.zip", Constants.EXTEND_STORAGE_PATH + "temp.zip");
+                File file = new File(Constants.EXTEND_STORAGE_PATH + "temp.zip");
+                file.delete();
+            } else {
+                FileUtil.writeInputStreamToSD(Constants.EXTEND_STORAGE_PATH + "sum.zip", inputStream);//一般文件有个唯一的id
             }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-
-            }
+            File file = new File(Constants.EXTEND_STORAGE_PATH + "sum.zip");
+            SPUtils.put(GlobalApplication.getInstance().getApplicationContext(), Constants.DEMO_RANGE, file.length());
+        }, throwable -> {
         });
     }
 
@@ -229,17 +180,7 @@ public class FilePresenter {
             public void onError(Exception e) {
 
             }
-        }, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
-            @Override
-            public void accept(ResponseBody responseBody) throws Exception {
-                BLog.e("   accept     ");
-            }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                BLog.e("          throwable=" + throwable.getLocalizedMessage());
-            }
-        });
+        }, AndroidSchedulers.mainThread(), responseBody -> BLog.e("   accept     "), throwable -> BLog.e("          throwable=" + throwable.getLocalizedMessage()));
 
     }
 }

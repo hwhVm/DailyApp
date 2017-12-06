@@ -16,8 +16,6 @@ import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.util.BLog;
 import beini.com.dailyapp.util.GsonUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import okhttp3.ResponseBody;
 
 /**
  * Created by beini on 2017/10/25.
@@ -37,59 +35,39 @@ public class UserPresenter {
     }
 
     public void registerUser(UserBean userBean, final RegisterFragment registerFragment) {
-        requestModel.sendRequest(NetConstants.URL_REGISTER_USER, userBean, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
-            @Override
-            public void accept(ResponseBody responseBody) throws Exception {
-                BaseResponseJson baseResponseJson = (BaseResponseJson) GsonUtil.getGsonUtil().fromJson(responseBody.string(), BaseResponseJson.class);
-                if (baseResponseJson.getReturnCode() == NetConstants.IS_SUCCESS) {
-                    registerFragment.onSuccess();
-                } else {
-                    registerFragment.onFailed();
-                }
-            }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                BLog.e("   Throwable       " + throwable.getLocalizedMessage());
+        requestModel.sendRequest(NetConstants.URL_REGISTER_USER, userBean, AndroidSchedulers.mainThread(), responseBody -> {
+            BaseResponseJson baseResponseJson = (BaseResponseJson) GsonUtil.getGsonUtil().fromJson(responseBody.string(), BaseResponseJson.class);
+            if (baseResponseJson.getReturnCode() == NetConstants.IS_SUCCESS) {
+                registerFragment.onSuccess();
+            } else {
                 registerFragment.onFailed();
             }
+        }, throwable -> {
+            BLog.e("   Throwable       " + throwable.getLocalizedMessage());
+            registerFragment.onFailed();
         });
     }
 
     public void loginUser(UserBean userBean, final LoginFragment loginFragment) {
-        requestModel.sendRequest(NetConstants.URL_LOGIN_USER, userBean, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
-            @Override
-            public void accept(ResponseBody responseBody) throws Exception {
-                LoginResponse baseResponseJson = (LoginResponse) GsonUtil.getGsonUtil().fromJson(responseBody.string(), LoginResponse.class);
-                if (baseResponseJson.getReturnCode() == NetConstants.IS_SUCCESS) {
-                    loginFragment.OnSuccess();
-                    UserBean userBeanFromNet = baseResponseJson.getUserBean();
-                    storageModel.saveUserBeanToDb(userBeanFromNet);
-                } else {
-                    loginFragment.onFalied();
-                }
-            }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
+        requestModel.sendRequest(NetConstants.URL_LOGIN_USER, userBean, AndroidSchedulers.mainThread(), responseBody -> {
+            LoginResponse baseResponseJson = (LoginResponse) GsonUtil.getGsonUtil().fromJson(responseBody.string(), LoginResponse.class);
+            if (baseResponseJson.getReturnCode() == NetConstants.IS_SUCCESS) {
+                loginFragment.OnSuccess();
+                UserBean userBeanFromNet = baseResponseJson.getUserBean();
+                storageModel.saveUserBeanToDb(userBeanFromNet);
+            } else {
                 loginFragment.onFalied();
             }
-        });
+        }, throwable -> loginFragment.onFalied());
 
     }
 
 
     public void logout(UserBean currentUser) {
-        requestModel.sendRequest(NetConstants.URL_LOGOUT, currentUser, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
-            @Override
-            public void accept(ResponseBody responseBody) throws Exception {
+        requestModel.sendRequest(NetConstants.URL_LOGOUT, currentUser, AndroidSchedulers.mainThread(), responseBody -> {
 
-            }
-        }, new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
+        }, throwable -> {
 
-            }
         });
     }
 

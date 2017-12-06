@@ -15,7 +15,6 @@ import io.reactivex.Flowable;
 import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -55,18 +54,9 @@ public class RequestModel {
                                         @NonNull FlowableOnSubscribe<File> flowableOnSubscribe, @NonNull final Consumer<ResponseBody> subscriber, final Consumer<Throwable> consumer) {
 
         Flowable.create(flowableOnSubscribe, BackpressureStrategy.BUFFER)
-                .map(new Function<File, Flowable<ResponseBody>>() {
-                    @Override
-                    public Flowable<ResponseBody> apply(File file) throws Exception {
-                        return RxNetUtil.getSingleton().uploadFileSingle(url, file);
-                    }
-                })
-                .map(new Function<Flowable<ResponseBody>, Disposable>() {
-                    @Override
-                    public Disposable apply(Flowable<ResponseBody> responseBodyFlowable) throws Exception {
-                        return responseBodyFlowable.observeOn(scheduler).subscribeOn(Schedulers.io()).subscribe(subscriber, consumer);
-                    }
-                }).subscribeOn(Schedulers.io()).subscribe();
+                .map(file -> RxNetUtil.getSingleton().uploadFileSingle(url, file))
+                .map(responseBodyFlowable -> responseBodyFlowable.observeOn(scheduler).subscribeOn(Schedulers.io()).subscribe(subscriber, consumer))
+                .subscribeOn(Schedulers.io()).subscribe();
 
     }
 
@@ -75,18 +65,8 @@ public class RequestModel {
                                        @NonNull FlowableOnSubscribe<List<File>> flowableOnSubscribe, @NonNull final Consumer<ResponseBody> subscriber, final Consumer<Throwable> consumer) {
 
         Flowable.create(flowableOnSubscribe, BackpressureStrategy.BUFFER)
-                .map(new Function<List<File>, Flowable<ResponseBody>>() {
-                    @Override
-                    public Flowable<ResponseBody> apply(List<File> files) throws Exception {
-                        return RxNetUtil.getSingleton().uploadMultiFile(url, files);
-                    }
-                })
-                .map(new Function<Flowable<ResponseBody>, Disposable>() {
-                    @Override
-                    public Disposable apply(Flowable<ResponseBody> responseBodyFlowable) throws Exception {
-                        return responseBodyFlowable.observeOn(scheduler).subscribeOn(Schedulers.io()).subscribe(subscriber, consumer);
-                    }
-                }).subscribeOn(Schedulers.io()).subscribe();
+                .map(files -> RxNetUtil.getSingleton().uploadMultiFile(url, files))
+                .map(responseBodyFlowable -> responseBodyFlowable.observeOn(scheduler).subscribeOn(Schedulers.io()).subscribe(subscriber, consumer)).subscribeOn(Schedulers.io()).subscribe();
 
     }
 

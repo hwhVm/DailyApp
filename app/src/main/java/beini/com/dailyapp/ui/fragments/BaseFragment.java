@@ -33,6 +33,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = ViewInjectorImpl.registerInstance(this, inflater, container);
+
         initData();
         initView();
         return view;

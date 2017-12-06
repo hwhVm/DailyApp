@@ -13,7 +13,6 @@ import javax.inject.Inject;
 
 import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.R;
-import beini.com.dailyapp.adapter.BaseAdapter;
 import beini.com.dailyapp.adapter.BaseBean;
 import beini.com.dailyapp.adapter.DailyAdapter;
 import beini.com.dailyapp.bean.DailyBean;
@@ -49,7 +48,9 @@ public class DailyShowFragment extends BaseFragment {
 
     @Override
     public void initView() {
-
+        baseActivity.setAddVisibility(View.VISIBLE);
+        baseActivity.setAddImageDrawable(getResources().getDrawable(R.mipmap.icon_addx));
+        baseActivity.setAddOnClickListener(v -> RouteService.getInstance().setArgs(null).jumpToDailyEdit(baseActivity));
     }
 
 //    @Event({R.id.btn_edit, R.id.btn_refresh})
@@ -96,14 +97,12 @@ public class DailyShowFragment extends BaseFragment {
 //            public void moreNum() {
 //            }
 //        });
-        dailyAdapter.setItemClick(new BaseAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                DailyBean dailyBean = dailyBeans.get(position);
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(Constants.DAILY_EDIT_DATA,dailyBean);
-                RouteService.getInstance().setArgs(bundle).jumpToDailyEdit(baseActivity, bundle);
-            }
+        dailyAdapter.setItemClick((view, position) -> {
+            DailyBean dailyBean = dailyBeans.get(position);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(Constants.DAILY_EDIT_DATA, dailyBean);
+            RouteService.getInstance().setArgs(bundle).jumpToDailyEdit(baseActivity);
+
         });
     }
 

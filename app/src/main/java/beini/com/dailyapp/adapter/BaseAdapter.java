@@ -148,6 +148,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseAdapter.Vi
         return true;
     }
 
+
     public interface onItemLongClickListener {
         void onItemLongClick(View view, int position);
     }

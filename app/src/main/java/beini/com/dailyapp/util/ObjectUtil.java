@@ -7,17 +7,17 @@ package beini.com.dailyapp.util;
 public class ObjectUtil {
 
     public static Object createInstance(Class<?> className) {
+        Class<?> c = null;
         try {
-            Class<?> c = Class.forName(className.getName());
-            try {
-                return c.newInstance();
-            } catch (IllegalAccessException | InstantiationException e) {
-                e.printStackTrace();
-            }
+            c = Class.forName(className.getName());
+            return c.newInstance();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
         }
-
-        return null;
+        return c;
     }
 }
