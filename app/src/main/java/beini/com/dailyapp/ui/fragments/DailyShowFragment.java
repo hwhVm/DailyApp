@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -23,6 +22,7 @@ import beini.com.dailyapp.bind.ViewInject;
 import beini.com.dailyapp.constant.Constants;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
+import beini.com.dailyapp.ui.inter.DailyShowListener;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.DailyPresenter;
 import beini.com.dailyapp.ui.route.RouteService;
@@ -32,38 +32,26 @@ import io.objectbox.Box;
  * Create by beini  2017/11/6
  */
 @ContentView(R.layout.fragment_daily_show)
-public class DailyShowFragment extends BaseFragment {
+public class DailyShowFragment extends BaseFragment implements DailyShowListener {
     @ViewInject(R.id.recycle_daily_list)
     RecyclerView recycle_daily_list;
     @Inject
     DailyPresenter dailyPresenter;
 
     @Override
-    public void initData() {
+    public void init() {
         DailyComponent build = DaggerDailyComponent.builder().dailyModule(new DailyModule()).build();
         build.inject(this);
         dailyPresenter.queryDailyBynum(returnDailyPageBean(), this);
     }
 
-
     @Override
-    public void initView() {
+    protected void hiddenChanged(boolean hidden) {
+        baseActivity.setToolbarTitle(getString(R.string.daily_list));
         baseActivity.setAddVisibility(View.VISIBLE);
         baseActivity.setAddImageDrawable(getResources().getDrawable(R.mipmap.icon_addx));
         baseActivity.setAddOnClickListener(v -> RouteService.getInstance().setArgs(null).jumpToDailyEdit(baseActivity));
     }
-
-//    @Event({R.id.btn_edit, R.id.btn_refresh})
-//    private void mEvent(View view) {
-//        switch (view.getId()) {
-//            case R.id.btn_edit:
-//                RouteService.getInstance().jumpToDailyEdit(baseActivity);
-//                break;
-//            case R.id.btn_refresh:
-//                dailyPresenter.queryDailyBynum(returnDailyPageBean(), this);
-//                break;
-//        }
-//    }
 
     public DailyPageBean returnDailyPageBean() {
         DailyPageBean dailyPageBean = new DailyPageBean();
@@ -77,33 +65,22 @@ public class DailyShowFragment extends BaseFragment {
         return dailyPageBean;
     }
 
-    public void onFailed() {
-        Toast.makeText(getActivity(), "加载失败", Toast.LENGTH_SHORT).show();
+    @Override
+    public void onResult(boolean aBoolean, List<DailyBean> dailyBeans) {
+        if (aBoolean) {
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            final DailyAdapter dailyAdapter = new DailyAdapter(new BaseBean<>(R.layout.item_daily, dailyBeans, true));
+            recycle_daily_list.setLayoutManager(linearLayoutManager);
+            recycle_daily_list.setAdapter(dailyAdapter);
+            dailyAdapter.setItemClick((view, position) -> {
+                DailyBean dailyBean = dailyBeans.get(position);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(Constants.DAILY_EDIT_DATA, dailyBean);
+                RouteService.getInstance().setArgs(bundle).jumpToDailyEdit(baseActivity);
+            });
+        } else {
+            showToast(getString(R.string.load_faild));
+        }
     }
-
-    public void onSuccess(final List<DailyBean> dailyBeans) {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        final DailyAdapter dailyAdapter = new DailyAdapter(new BaseBean<>(R.layout.item_daily, dailyBeans, true));
-        recycle_daily_list.setLayoutManager(linearLayoutManager);
-        recycle_daily_list.setAdapter(dailyAdapter);
-//        dailyAdapter.setOpenCheckListener(new CheckListener() {
-//            @Override
-//            public void checked() {
-//                dailyAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void moreNum() {
-//            }
-//        });
-        dailyAdapter.setItemClick((view, position) -> {
-            DailyBean dailyBean = dailyBeans.get(position);
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(Constants.DAILY_EDIT_DATA, dailyBean);
-            RouteService.getInstance().setArgs(bundle).jumpToDailyEdit(baseActivity);
-
-        });
-    }
-
 }

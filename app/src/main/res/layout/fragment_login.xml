@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
         android:layout_centerVertical="true"
         android:orientation="vertical">
 
@@ -32,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-            android:text="登录" />
+            android:text="@string/login_text" />
 
 
         <beini.com.dailyapp.ui.view.GlobalTextView
@@ -40,33 +41,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:layout_marginRight="35dp"
+            android:layout_marginEnd="35dp"
             android:layout_marginTop="15dp"
             android:padding="15dp"
-            android:text="注册" />
+            android:text="@string/register_text" />
     </LinearLayout>
-    <!---->
-    <ProgressBar
-        android:id="@+id/pro_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="25dp"
-        android:max="100"
-        android:progress="0"
-        android:visibility="gone" />
-
-    <beini.com.dailyapp.ui.view.GlobalButton
-        android:id="@+id/btn_downfile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <beini.com.dailyapp.ui.view.GlobalButton
-        android:id="@+id/btn_stop_downfile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
 
 
 </RelativeLayout>

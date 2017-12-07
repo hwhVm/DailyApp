@@ -18,9 +18,7 @@ import beini.com.dailyapp.net.progress.ProgressListener;
 import beini.com.dailyapp.net.response.FileResponse;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
-import beini.com.dailyapp.ui.fragments.DailyEditFragment;
-import beini.com.dailyapp.ui.fragments.LoginFragment;
-import beini.com.dailyapp.ui.fragments.RegisterFragment;
+import beini.com.dailyapp.ui.inter.UploadListener;
 import beini.com.dailyapp.ui.model.RequestModel;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.util.BLog;
@@ -29,7 +27,6 @@ import beini.com.dailyapp.util.GsonUtil;
 import beini.com.dailyapp.util.SPUtils;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
-import okhttp3.ResponseBody;
 
 /**
  * Created by beini on 2017/11/8.
@@ -53,24 +50,20 @@ public class FilePresenter {
         requestModel.uploadSingleFile(NetConstants.URL_UPLOAD_SINGLE_FILE, file, AndroidSchedulers.mainThread(), responseBody -> BLog.e("  uploadSingleFile "), new Consumer<Throwable>() {
             @Override
             public void accept(Throwable throwable) throws Exception {
-                BLog.e("   throwable=" + throwable.getLocalizedMessage());
             }
         });
     }
 
-    public void uploadMultiFile(List<File> files, final DailyEditFragment dailyEditFragment) {
+    public void uploadMultiFile(List<File> files, final UploadListener uploadListener) {
 
-        requestModel.uploadMultiFile(NetConstants.URL_UPLOAD_MULTI_FILE, files, AndroidSchedulers.mainThread(), new Consumer<ResponseBody>() {
-            @Override
-            public void accept(ResponseBody responseBody) throws Exception {
-                FileResponse fileResponse = (FileResponse) GsonUtil.getGsonUtil().fromJson(responseBody.string(), FileResponse.class);
-                dailyEditFragment.insertDaily(fileResponse);
-            }
+        requestModel.uploadMultiFile(NetConstants.URL_UPLOAD_MULTI_FILE, files, AndroidSchedulers.mainThread(), responseBody -> {
+            FileResponse fileResponse = (FileResponse) GsonUtil.getGsonUtil().fromJson(responseBody.string(), FileResponse.class);
+            uploadListener.onResult(fileResponse);
         }, throwable -> BLog.e(" uploadMultiFile  throwable= " + throwable.getLocalizedMessage()));
 
     }
 
-    public void uploadSingleFileProcess(final RegisterFragment registerFragment) {
+    public void uploadSingleFileProcess() {
         requestModel.uploadSingleFileProcess(NetConstants.URL_UPLOAD_SINGLE_FILE, AndroidSchedulers.mainThread(),
                 e -> {
                     String path = Environment.getExternalStorageDirectory() + File.separator + "aa.xml";
@@ -94,16 +87,16 @@ public class FilePresenter {
 
     }
 
-    public void getFileInfo(FileRequestBean fileRequestBean, final LoginFragment loginFragment) {
+    public void getFileInfo(FileRequestBean fileRequestBean) {
         requestModel.sendRequest(NetConstants.URL_GET_FILE_INFO, fileRequestBean, AndroidSchedulers.mainThread(),
                 responseBody -> {
                     String string = responseBody.string();
                     FileRequestBean fileRequestBean1 = (FileRequestBean) GsonUtil.getGsonUtil().fromJson(string, FileRequestBean.class);
-                    loginFragment.onStartDownload(fileRequestBean1);
+//                    loginFragment.onStartDownload(fileRequestBean1);
                 },
                 throwable -> {
                     BLog.e("        throwable=" + throwable);
-                    loginFragment.onFailedDownload();
+//                    loginFragment.onFailedDownload();
                 });
     }
 
@@ -159,7 +152,6 @@ public class FilePresenter {
 
     public void uploadFile(ProgressBar progressBar) {
         File file = new File(Constants.EXTEND_STORAGE_PATH + "sum.zip");
-        BLog.e(" ------------>file.exists()=" + file.exists());
         requestModel.uploadFile("0", NetConstants.URL_BREAKPOINT_UPLOAD, file, new ProgressListener() {
             @Override
             public void onStart() {
@@ -168,7 +160,6 @@ public class FilePresenter {
 
             @Override
             public void update(long bytesRead, long contentLength, boolean done) {
-                BLog.e(" ------------ > ");
             }
 
             @Override
@@ -180,7 +171,8 @@ public class FilePresenter {
             public void onError(Exception e) {
 
             }
-        }, AndroidSchedulers.mainThread(), responseBody -> BLog.e("   accept     "), throwable -> BLog.e("          throwable=" + throwable.getLocalizedMessage()));
+        }, AndroidSchedulers.mainThread(), responseBody -> BLog.e("   accept     "), throwable -> {
+        });
 
     }
 }

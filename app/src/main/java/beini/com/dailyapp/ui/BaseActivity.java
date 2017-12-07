@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
 import beini.com.dailyapp.R;
@@ -31,6 +32,8 @@ public abstract class BaseActivity extends Activity {
     ImageView image_base_add;
     @ViewInject(R.id.global_toolbar)
     Toolbar global_toolbar;
+    @ViewInject(R.id.global_title)
+    TextView global_title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,8 +136,17 @@ public abstract class BaseActivity extends Activity {
         image_base_add.setOnClickListener(onClickListener);
     }
 
-    public void setToolBarVisibility(int visibility) {
+    public void setToolbarVisibility(int visibility) {
         global_toolbar.setVisibility(visibility);
+    }
+
+    public void setToolbarTitle(String title) {
+        global_title.setVisibility(View.VISIBLE);
+        global_title.setText(title);
+    }
+
+    public void recoverToolbar() {
+        setAddVisibility(View.GONE);
     }
 
 }

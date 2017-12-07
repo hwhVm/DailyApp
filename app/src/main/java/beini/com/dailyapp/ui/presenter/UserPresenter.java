@@ -8,12 +8,10 @@ import beini.com.dailyapp.net.response.BaseResponseJson;
 import beini.com.dailyapp.net.response.LoginResponse;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
-import beini.com.dailyapp.ui.fragments.LoginFragment;
-import beini.com.dailyapp.ui.fragments.RegisterFragment;
+import beini.com.dailyapp.ui.inter.GlobalApplicationListener;
 import beini.com.dailyapp.ui.model.RequestModel;
 import beini.com.dailyapp.ui.model.StorageModel;
 import beini.com.dailyapp.ui.module.DailyModule;
-import beini.com.dailyapp.util.BLog;
 import beini.com.dailyapp.util.GsonUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
@@ -34,31 +32,29 @@ public class UserPresenter {
         build.inject(this);
     }
 
-    public void registerUser(UserBean userBean, final RegisterFragment registerFragment) {
+    public void registerUser(UserBean userBean, final GlobalApplicationListener globalApplicationListener) {
         requestModel.sendRequest(NetConstants.URL_REGISTER_USER, userBean, AndroidSchedulers.mainThread(), responseBody -> {
-            BaseResponseJson baseResponseJson = (BaseResponseJson) GsonUtil.getGsonUtil().fromJson(responseBody.string(), BaseResponseJson.class);
-            if (baseResponseJson.getReturnCode() == NetConstants.IS_SUCCESS) {
-                registerFragment.onSuccess();
-            } else {
-                registerFragment.onFailed();
-            }
-        }, throwable -> {
-            BLog.e("   Throwable       " + throwable.getLocalizedMessage());
-            registerFragment.onFailed();
-        });
+                    BaseResponseJson baseResponseJson = (BaseResponseJson) GsonUtil.getGsonUtil().fromJson(responseBody.string(), BaseResponseJson.class);
+                    if (baseResponseJson.getReturnCode() == NetConstants.IS_SUCCESS) {
+                        globalApplicationListener.onResult(true);
+                    } else {
+                        globalApplicationListener.onResult(false);
+                    }
+                }, throwable -> globalApplicationListener.onResult(false)
+        );
     }
 
-    public void loginUser(UserBean userBean, final LoginFragment loginFragment) {
+    public void loginUser(UserBean userBean, final GlobalApplicationListener loginListener) {
         requestModel.sendRequest(NetConstants.URL_LOGIN_USER, userBean, AndroidSchedulers.mainThread(), responseBody -> {
             LoginResponse baseResponseJson = (LoginResponse) GsonUtil.getGsonUtil().fromJson(responseBody.string(), LoginResponse.class);
             if (baseResponseJson.getReturnCode() == NetConstants.IS_SUCCESS) {
-                loginFragment.OnSuccess();
+                loginListener.onResult(true);
                 UserBean userBeanFromNet = baseResponseJson.getUserBean();
                 storageModel.saveUserBeanToDb(userBeanFromNet);
             } else {
-                loginFragment.onFalied();
+                loginListener.onResult(false);
             }
-        }, throwable -> loginFragment.onFalied());
+        }, throwable -> loginListener.onResult(false));
 
     }
 

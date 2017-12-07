@@ -1,4 +1,4 @@
-package beini.com.dailyapp.base64;
+package beini.com.dailyapp.util.base64;
 
 /**
  * Created by beini on 2017/12/6.

@@ -1,4 +1,4 @@
-package beini.com.dailyapp.base64;//
+package beini.com.dailyapp.util.base64;//
 // Source code recreated from a .class file by IntelliJ IDEA
 // (powered by Fernflower decompiler)
 //

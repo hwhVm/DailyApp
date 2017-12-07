@@ -4,8 +4,8 @@ package beini.com.dailyapp.util;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import beini.com.dailyapp.base64.BASE64Decoder;
-import beini.com.dailyapp.base64.BASE64Encoder;
+import beini.com.dailyapp.util.base64.BASE64Decoder;
+import beini.com.dailyapp.util.base64.BASE64Encoder;
 
 /**
  * Created by beini on 2017/5/24.

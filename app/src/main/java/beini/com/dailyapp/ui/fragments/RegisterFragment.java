@@ -4,7 +4,6 @@ package beini.com.dailyapp.ui.fragments;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.RadioButton;
-import android.widget.Toast;
 
 import javax.inject.Inject;
 
@@ -15,6 +14,7 @@ import beini.com.dailyapp.bind.Event;
 import beini.com.dailyapp.bind.ViewInject;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
+import beini.com.dailyapp.ui.inter.GlobalApplicationListener;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
 import beini.com.dailyapp.ui.view.GlobalEditText;
@@ -23,7 +23,7 @@ import beini.com.dailyapp.ui.view.GlobalEditText;
  * Create by beini 2017/10/25
  */
 @ContentView(R.layout.fragment_register)
-public class RegisterFragment extends BaseFragment {
+public class RegisterFragment extends BaseFragment implements GlobalApplicationListener {
     @Inject
     UserPresenter userPresenter;
     @ViewInject(R.id.et_re_email)
@@ -43,15 +43,16 @@ public class RegisterFragment extends BaseFragment {
     }
 
     @Override
-    public void initData() {
+    public void init() {
         DailyComponent build = DaggerDailyComponent.builder().dailyModule(new DailyModule()).build();
         build.inject(this);
     }
 
     @Override
-    public void initView() {
-
+    protected void hiddenChanged(boolean hidden) {
+        baseActivity.setToolbarTitle(getString(R.string.register_text));
     }
+
 
     @Event({R.id.btn_register})
     private void mEvent(View view) {
@@ -73,15 +74,15 @@ public class RegisterFragment extends BaseFragment {
         String password = et_re_password.getText().toString();
 
         if (TextUtils.isEmpty(email)) {
-            Toast.makeText(getActivity(), "邮箱错误", Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.error_email));
             return null;
         }
         if (TextUtils.isEmpty(username)) {
-            Toast.makeText(getActivity(), "用户名错误", Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.error_username));
             return null;
         }
         if (TextUtils.isEmpty(password)) {
-            Toast.makeText(getActivity(), "密码错误", Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.error_password));
             return null;
         }
         userBean.setEmail(email);
@@ -95,17 +96,16 @@ public class RegisterFragment extends BaseFragment {
         userBean.setPassword(password);
         userBean.setSex(id);
         userBean.setUsername(username);
-
         return userBean;
     }
 
-    public void onSuccess() {
-        Toast.makeText(getActivity(), "注册成功", Toast.LENGTH_SHORT).show();
-        baseActivity.back();
+    @Override
+    public void onResult(boolean aBoolen) {
+        if (aBoolen) {
+            showToast(getString(R.string.register_success));
+            baseActivity.back();
+        } else {
+            showToast(getString(R.string.register_failed));
+        }
     }
-
-    public void onFailed() {
-        Toast.makeText(getActivity(), "注册失败", Toast.LENGTH_SHORT).show();
-    }
-
 }

@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Toast;
 
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -36,6 +35,8 @@ import beini.com.dailyapp.constant.NetConstants;
 import beini.com.dailyapp.net.response.FileResponse;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
+import beini.com.dailyapp.ui.inter.GlobalApplicationListener;
+import beini.com.dailyapp.ui.inter.UploadListener;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.DailyPresenter;
 import beini.com.dailyapp.ui.presenter.FilePresenter;
@@ -54,7 +55,7 @@ import static android.app.Activity.RESULT_OK;
  * Create by beini 2017/10/19
  */
 @ContentView(R.layout.fragment_daily_edit)
-public class DailyEditFragment extends BaseFragment implements ActivityResultListener {
+public class DailyEditFragment extends BaseFragment implements ActivityResultListener, GlobalApplicationListener, UploadListener {
     @Inject
     DailyPresenter dailyPresenter;
     @Inject
@@ -70,24 +71,13 @@ public class DailyEditFragment extends BaseFragment implements ActivityResultLis
     RecyclerView recycle_gallery;
     private GalleryAdapter galleryAdapter;
     private List<Bitmap> bitmaps;
-    private int REQUEST_GALLERY = 111;
-
-    public void initData() {
-
-    }
-
+    private int REQUEST_GALLERY = 0x111;
+    private List<String> pathsSum = new ArrayList<>();
 
     @Override
-    public void initView() {
+    public void init() {
         DailyComponent build = DaggerDailyComponent.builder().dailyModule(new DailyModule()).build();
         build.inject(this);
-        if (getArguments() != null) {
-            DailyBean dailyBean = getArguments().getParcelable(Constants.DAILY_EDIT_DATA);
-            daily_title.setText(dailyBean.getTitle());
-            daily_author.setText(dailyBean.getAuthor());
-            daily_content.setText(dailyBean.getContent());
-        }
-        baseActivity.setActivityResultListener(this);
 
         bitmaps = new ArrayList<>();
         bitmaps.add(BitmapFactory.decodeResource(getResources(), R.mipmap.icon_addx));
@@ -120,11 +110,22 @@ public class DailyEditFragment extends BaseFragment implements ActivityResultLis
         }));
     }
 
+    @Override
+    protected void hiddenChanged(boolean hidden) {
+        baseActivity.setToolbarTitle(getString(R.string.daily_edit));
+        if (getArguments() != null) {
+            DailyBean dailyBean = getArguments().getParcelable(Constants.DAILY_EDIT_DATA);
+            daily_title.setText(dailyBean.getTitle());
+            daily_author.setText(dailyBean.getAuthor());
+            daily_content.setText(dailyBean.getContent());
+        }
+        baseActivity.setActivityResultListener(this);
+    }
+
     @Event({R.id.btn_commit})
     private void mEvent(View view) {
         switch (view.getId()) {
             case R.id.btn_commit:
-                BLog.e("------------->pathsSum.size()=" + pathsSum.size());
                 if (pathsSum.size() == 1) {
                     List<File> files = new ArrayList<>();
                     for (int i = 0; i < pathsSum.size(); i++) {
@@ -137,17 +138,12 @@ public class DailyEditFragment extends BaseFragment implements ActivityResultLis
                     }
                     filePresenter.uploadMultiFile(files, this);
                 } else {
-                    insertDaily(new FileResponse().setFileId(""));
+                    onResult(new FileResponse().setFileId(""));
                 }
                 break;
         }
     }
 
-    public void insertDaily(FileResponse fileResponse) {
-        DailyBean dailyBean = returnDailyBean();
-        dailyBean.setPicUrl(fileResponse.getFileId());
-        dailyPresenter.insertDaily(dailyBean, this);
-    }
 
     public DailyBean returnDailyBean() {
         DailyBean dailyBean = new DailyBean();
@@ -163,28 +159,15 @@ public class DailyEditFragment extends BaseFragment implements ActivityResultLis
         return dailyBean;
     }
 
-    public void onUIShow(boolean isSuccess) {
-        if (isSuccess) {
-            Toast.makeText(getActivity().getApplicationContext(), getString(R.string.daily_add_successed), Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(getActivity().getApplicationContext(), getString(R.string.daily_add_failed), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private List<String> pathsSum = new ArrayList<>();
-
     @Override
     public void resultCallback(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_GALLERY && resultCode == RESULT_OK) {
-//          List<Uri> mSelected = Matisse.obtainResult(data);
             List<String> paths = Matisse.obtainPathResult(data);
             bitmaps.remove(bitmaps.size() - 1);
 
             for (int i = 0; i < paths.size(); i++) {
                 String path = paths.get(i);
-                BLog.e("  path=" + path + "         " + (!pathsSum.contains(path)));
                 File file = new File(path);
-                BLog.e("-------->file.exists()=" + file.exists());
                 if (!pathsSum.contains(path) && file.exists()) {
                     Bitmap bitmap = BitmapFactory.decodeFile(path);
                     bitmaps.add(bitmap);
@@ -199,4 +182,19 @@ public class DailyEditFragment extends BaseFragment implements ActivityResultLis
 
     }
 
+    @Override
+    public void onResult(boolean aBoolen) {
+        if (aBoolen) {
+            showToast(getString(R.string.daily_add_successed));
+        } else {
+            showToast(getString(R.string.daily_add_failed));
+        }
+    }
+
+    @Override
+    public void onResult(FileResponse fileResponse) {
+        DailyBean dailyBean = returnDailyBean();
+        dailyBean.setPicUrl(fileResponse.getFileId());
+        dailyPresenter.insertDaily(dailyBean, this);
+    }
 }
