@@ -7,8 +7,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.bean.FileRequestBean;
 import beini.com.dailyapp.constant.Constants;
@@ -16,11 +14,7 @@ import beini.com.dailyapp.constant.NetConstants;
 import beini.com.dailyapp.net.progress.CusNetworkInterceptor;
 import beini.com.dailyapp.net.progress.ProgressListener;
 import beini.com.dailyapp.net.response.FileResponse;
-import beini.com.dailyapp.ui.component.DaggerDailyComponent;
-import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.inter.UploadListener;
-import beini.com.dailyapp.ui.model.RequestModel;
-import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.util.BLog;
 import beini.com.dailyapp.util.FileUtil;
 import beini.com.dailyapp.util.GsonUtil;
@@ -32,16 +26,7 @@ import io.reactivex.functions.Consumer;
  * Created by beini on 2017/11/8.
  */
 
-public class FilePresenter {
-
-    @Inject
-    RequestModel requestModel;
-
-    @Inject
-    public FilePresenter() {
-        DailyComponent build = DaggerDailyComponent.builder().dailyModule(new DailyModule()).build();
-        build.inject(this);
-    }
+public class FilePresenter extends BasePresenter {
 
     public void uploadSingleFile() {
         String path1 = Environment.getExternalStorageDirectory() + File.separator + "0.zip";

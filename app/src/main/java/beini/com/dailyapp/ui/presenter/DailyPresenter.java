@@ -1,17 +1,11 @@
 package beini.com.dailyapp.ui.presenter;
 
-import javax.inject.Inject;
-
 import beini.com.dailyapp.bean.DailyBean;
 import beini.com.dailyapp.bean.DailyPageBean;
 import beini.com.dailyapp.constant.NetConstants;
 import beini.com.dailyapp.net.response.BaseResponseJson;
-import beini.com.dailyapp.ui.component.DaggerDailyComponent;
-import beini.com.dailyapp.ui.component.DailyComponent;
 import beini.com.dailyapp.ui.inter.DailyShowListener;
 import beini.com.dailyapp.ui.inter.GlobalApplicationListener;
-import beini.com.dailyapp.ui.model.RequestModel;
-import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.util.BLog;
 import beini.com.dailyapp.util.Base64Util;
 import beini.com.dailyapp.util.GsonUtil;
@@ -22,16 +16,7 @@ import io.reactivex.functions.Consumer;
  * Created by beini on 2017/10/19.
  */
 
-public class DailyPresenter {
-
-    @Inject
-    RequestModel requestModel;
-
-    @Inject
-    public DailyPresenter() {
-        DailyComponent build = DaggerDailyComponent.builder().dailyModule(new DailyModule()).build();
-        build.inject(this);
-    }
+public class DailyPresenter extends BasePresenter {
 
     public void insertDaily(DailyBean dailyBean, final GlobalApplicationListener globalApplicationListener) {
         requestModel.sendRequest(NetConstants.URL_ADD_DAILY, dailyBean, AndroidSchedulers.mainThread(), responseBody -> {

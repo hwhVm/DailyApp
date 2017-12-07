@@ -54,7 +54,6 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
             userBean = userBeans.get(userBeans.size() - 1);
             if (userBean != null) {
                 login();
-
             }
         }
     }

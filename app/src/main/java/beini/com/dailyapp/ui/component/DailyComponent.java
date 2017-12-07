@@ -5,6 +5,7 @@ import beini.com.dailyapp.ui.fragments.DailyShowFragment;
 import beini.com.dailyapp.ui.fragments.LoginFragment;
 import beini.com.dailyapp.ui.fragments.RegisterFragment;
 import beini.com.dailyapp.ui.module.DailyModule;
+import beini.com.dailyapp.ui.presenter.BasePresenter;
 import beini.com.dailyapp.ui.presenter.DailyPresenter;
 import beini.com.dailyapp.ui.presenter.FilePresenter;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
@@ -28,4 +29,6 @@ public interface DailyComponent {
     void inject(FilePresenter filePresenter);
 
     void inject(DailyShowFragment dailyShowFragment);
+
+    void inject(BasePresenter basePresenter);
 }
