@@ -27,7 +27,7 @@ public class DailyAdapter extends BaseAdapter {
         DailyBean dailyBean = dailyBeans.get(position);
         getTextView((ViewHolder) holder, R.id.text_content).setText(dailyBean.getTitle());
         if (isOpenCheck()) {
-            getImageView((ViewHolder) holder, R.id.iv_selected).setVisibility((Integer) getIsCheck().get(position));
+//            getImageView((ViewHolder) holder, R.id.iv_selected).setVisibility((Integer) getIsCheck().get(position));
         }
     }
 }

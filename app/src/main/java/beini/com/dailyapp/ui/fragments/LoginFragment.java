@@ -3,7 +3,7 @@ package beini.com.dailyapp.ui.fragments;
 
 import android.Manifest;
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -35,16 +35,21 @@ import pub.devrel.easypermissions.EasyPermissions;
  * create by beini 2017/11/4
  */
 @ContentView(R.layout.fragment_login)
-public class LoginFragment extends BaseFragment implements EasyPermissions.PermissionCallbacks, GlobalApplicationListener {
-    @ViewInject(R.id.et_email)
+public class LoginFragment extends BaseFragment implements GlobalApplicationListener {
     GlobalEditText et_email;
-    @ViewInject(R.id.et_password)
     GlobalEditText et_password;
+    @ViewInject(R.id.text_input_layout_email)
+    TextInputLayout text_input_layout_email;
+    @ViewInject(R.id.text_input_layout_password)
+    TextInputLayout text_input_layout_password;
+
     @Inject
     UserPresenter userPresenter;
 
     @Override
     public void init() {
+        et_email = (GlobalEditText) text_input_layout_email.getEditText();
+        et_password = (GlobalEditText) text_input_layout_password.getEditText();
         DailyComponent build = DaggerDailyComponent.builder().dailyModule(new DailyModule()).build();
         build.inject(this);
         Box<UserBean> userBeanBox = GlobalApplication.getInstance().getBoxStore().boxFor(UserBean.class);
@@ -60,6 +65,7 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
 
     @Override
     protected void hiddenChanged(boolean hidden) {
+        baseActivity.setBackVisibility(View.GONE);
         baseActivity.setToolbarTitle(getString(R.string.login_text));
     }
 
@@ -95,17 +101,19 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
         userPresenter.loginUser(userBeanLogin, this);
     }
 
+
     public UserBean returnUserBean() {
         UserBean userBean = new UserBean();
         String email = et_email.getText().toString();
         String password = et_password.getText().toString();
+
         if (TextUtils.isEmpty(email)) {
-            showToast(getString(R.string.account_not_empty));
+            text_input_layout_email.setError(getString(R.string.account_not_empty));
             return null;
         }
         userBean.setEmail(email);
         if (TextUtils.isEmpty(password)) {
-            showToast(getString(R.string.password_not_empty));
+            text_input_layout_password.setError(getString(R.string.password_not_empty));
             return null;
         }
         userBean.setPassword(password);
@@ -125,26 +133,6 @@ public class LoginFragment extends BaseFragment implements EasyPermissions.Permi
 
     private boolean hasExternalStoragePermission() {
         return EasyPermissions.hasPermissions(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        BLog.e("      onRequestPermissionsResult      requestCode=" + requestCode + "   permissions=" + permissions.length);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @Override
-    public void onPermissionsGranted(int requestCode, List<String> perms) {
-        BLog.e("onPermissionsGranted:" + requestCode + ":" + perms.size());
-    }
-
-    @Override
-    public void onPermissionsDenied(int requestCode, List<String> perms) {
-        BLog.e("onPermissionsDenied:" + requestCode + ":" + perms.size());
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            new AppSettingsDialog.Builder(this).setTitle(getString(R.string.permission_request)).setRationale(getString(R.string.permission_request_content)).build().show();//也可以自定义
-        }
     }
 
     @Override

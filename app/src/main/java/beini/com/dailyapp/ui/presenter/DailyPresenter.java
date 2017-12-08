@@ -7,7 +7,6 @@ import beini.com.dailyapp.net.response.BaseResponseJson;
 import beini.com.dailyapp.ui.inter.DailyShowListener;
 import beini.com.dailyapp.ui.inter.GlobalApplicationListener;
 import beini.com.dailyapp.util.BLog;
-import beini.com.dailyapp.util.Base64Util;
 import beini.com.dailyapp.util.GsonUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
@@ -26,24 +25,19 @@ public class DailyPresenter extends BasePresenter {
             } else {
                 globalApplicationListener.onResult(false);
             }
-        }, throwable -> {
-            globalApplicationListener.onResult(false);
-        });
+        }, throwable -> globalApplicationListener.onResult(false));
     }
 
     public void queryDailyBynum(DailyPageBean pageTableForm, final DailyShowListener dailyShowListener) {
         requestModel.sendRequest(NetConstants.URL_QUERY_DAILY_BY_NUM, pageTableForm, AndroidSchedulers.mainThread(), responseBody -> {
             String str = responseBody.string();
-            String decode = Base64Util.decode(str);
-            DailyPageBean dailyPageBean = (DailyPageBean) GsonUtil.getGsonUtil().fromJson(decode, DailyPageBean.class);
+            DailyPageBean dailyPageBean = (DailyPageBean) GsonUtil.getGsonUtil().fromJson(str, DailyPageBean.class);
             if (dailyPageBean != null) {
                 dailyShowListener.onResult(true, dailyPageBean.getDailyBeans());
             } else {
                 dailyShowListener.onResult(false, null);
             }
-        }, throwable -> {
-            dailyShowListener.onResult(false, null);
-        });
+        }, throwable -> dailyShowListener.onResult(false, null));
     }
 
     public void queryDailyCount() {

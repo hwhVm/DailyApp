@@ -3,7 +3,6 @@ package beini.com.dailyapp.net;
 import android.support.annotation.NonNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +25,6 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -49,12 +47,7 @@ public class RxNetUtil {
         synchronized (RxNetUtil.class) {
             if (instance == null) {
                 instance = new RxNetUtil();
-                HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-                    @Override
-                    public void log(String message) {
-                        BLog.h(message);
-                    }
-                });
+                HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor(message -> BLog.h(message));
                 httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);//日志级别,NONE BASIC HEADERS BODY
                 File directory = new File(NetConstants.DIRECTORY_CACHE);
                 Cache cache = new Cache(directory, maxSize);
@@ -91,36 +84,30 @@ public class RxNetUtil {
     }
 
     private static Interceptor returnGeneralHeadInterceptor() {
-        return new Interceptor() {
-            @Override
-            public okhttp3.Response intercept(Chain chain) throws IOException {
-                Request.Builder builder = chain.request().newBuilder();
-                builder.addHeader("token", "123");
-                return chain.proceed(builder.build());
-            }
+        return chain -> {
+            Request.Builder builder = chain.request().newBuilder();
+            builder.addHeader("token", "123");
+            return chain.proceed(builder.build());
         };
 
     }
 
     private static Interceptor returnCacheInterceptor() {
-        return new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
+        return chain -> {
+            Request request = chain.request();
 //                BLog.e("------------->" + NetUtil.checkNet(GlobalApplication.getInstance().getApplicationContext()));
-                if (!NetUtil.checkNet(GlobalApplication.getInstance().getApplicationContext())) {//离线缓存控制  总的缓存时间=在线缓存时间+设置离线缓存时间
+            if (!NetUtil.checkNet(GlobalApplication.getInstance().getApplicationContext())) {//离线缓存控制  总的缓存时间=在线缓存时间+设置离线缓存时间
 
-                    int maxStale = 60 * 60 * 24 * 28; // 离线时缓存保存4周,单位:秒
-                    CacheControl tempCacheControl = new CacheControl.Builder()
-                            .onlyIfCached()
-                            .maxStale(maxStale, TimeUnit.SECONDS)
-                            .build();
-                    request = request.newBuilder()
-                            .cacheControl(tempCacheControl)
-                            .build();
-                }
-                return chain.proceed(request);
+                int maxStale = 60 * 60 * 24 * 28; // 离线时缓存保存4周,单位:秒
+                CacheControl tempCacheControl = new CacheControl.Builder()
+                        .onlyIfCached()
+                        .maxStale(maxStale, TimeUnit.SECONDS)
+                        .build();
+                request = request.newBuilder()
+                        .cacheControl(tempCacheControl)
+                        .build();
             }
+            return chain.proceed(request);
         };
     }
 
@@ -142,7 +129,7 @@ public class RxNetUtil {
                 if (cookies == null) {
                     BLog.e(" 没有加载 cookies ");
                 }
-                return cookies != null ? cookies : new ArrayList<Cookie>();
+                return cookies != null ? cookies : new ArrayList<>();
             }
         };
 

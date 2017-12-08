@@ -21,7 +21,8 @@ public class GsonUtil {
 
 
     public Object fromJson(String str, Class temClass) {
-        return gson.fromJson(str, temClass);
+        String decode = Base64Util.decode(str);
+        return gson.fromJson(decode, temClass);
 
     }
 

@@ -25,7 +25,7 @@ public class RouteService {
     }
 
     public void jumpToLogin(BaseActivity baseActivity) {
-        baseActivity.replaceFragment(LoginFragment.class);
+        baseActivity.replaceFragment(LoginFragment.class,null);
     }
 
     public void jumpToDailyEdit(BaseActivity baseActivity) {
@@ -35,11 +35,11 @@ public class RouteService {
 
     public void jumpToDailyShow(BaseActivity baseActivity) {
         baseActivity.remove(LoginFragment.class);
-        baseActivity.replaceFragment(DailyShowFragment.class);
+        baseActivity.replaceFragment(DailyShowFragment.class,null);
     }
 
     public void jumpToRegister(BaseActivity baseActivity) {
-        baseActivity.replaceFragment(RegisterFragment.class);
+        baseActivity.replaceFragment(RegisterFragment.class,null);
     }
 
     /**

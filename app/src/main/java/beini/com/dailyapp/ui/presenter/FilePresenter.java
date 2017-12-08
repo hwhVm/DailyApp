@@ -77,11 +77,8 @@ public class FilePresenter extends BasePresenter {
                 responseBody -> {
                     String string = responseBody.string();
                     FileRequestBean fileRequestBean1 = (FileRequestBean) GsonUtil.getGsonUtil().fromJson(string, FileRequestBean.class);
-//                    loginFragment.onStartDownload(fileRequestBean1);
                 },
                 throwable -> {
-                    BLog.e("        throwable=" + throwable);
-//                    loginFragment.onFailedDownload();
                 });
     }
 

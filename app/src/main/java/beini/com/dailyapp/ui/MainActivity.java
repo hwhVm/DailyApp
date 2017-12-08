@@ -5,7 +5,7 @@ import beini.com.dailyapp.ui.route.RouteService;
 public class MainActivity extends BaseActivity {
 
     @Override
-    public void initView() {
+    public void init() {
         RouteService.getInstance().jumpToLogin(this);
     }
 }

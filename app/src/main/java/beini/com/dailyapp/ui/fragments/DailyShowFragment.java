@@ -49,6 +49,8 @@ public class DailyShowFragment extends BaseFragment implements DailyShowListener
     protected void hiddenChanged(boolean hidden) {
         baseActivity.setToolbarTitle(getString(R.string.daily_list));
         baseActivity.setAddVisibility(View.VISIBLE);
+        baseActivity.setNavigationVisibility(View.VISIBLE);
+        baseActivity.setBackVisibility(View.GONE);
         baseActivity.setAddImageDrawable(getResources().getDrawable(R.mipmap.icon_addx));
         baseActivity.setAddOnClickListener(v -> RouteService.getInstance().setArgs(null).jumpToDailyEdit(baseActivity));
     }

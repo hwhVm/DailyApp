@@ -9,8 +9,10 @@ import java.util.List;
 
 import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.R;
-import beini.com.dailyapp.ui.BaseActivity;
 import beini.com.dailyapp.ui.fragments.BaseFragment;
+import beini.com.dailyapp.ui.fragments.DailyShowFragment;
+import beini.com.dailyapp.ui.fragments.MineFragment;
+import beini.com.dailyapp.ui.fragments.SquareFragment;
 
 /**
  * Created by beini on 2017/10/19.
@@ -48,8 +50,8 @@ public class FragmentUtil {
 
     private static long mLastKeyDown = 0;
 
-    public static void removePreFragment(BaseActivity baseActivity) {
-        if (tags != null && tags.size() > 1) {
+    public static void removePreFragment() {
+        if (tags != null && tags.size() > 1 && !isHome(fm)) {
             String current = tags.get(tags.size() - 1);
             String old = tags.get(tags.size() - 2);
             removeFragment(fm.findFragmentByTag(current));
@@ -68,11 +70,29 @@ public class FragmentUtil {
         }
     }
 
+    public static boolean isHome(FragmentManager fragmentManager) {
+        if (fragmentManager.findFragmentById(R.id.frame_layout) instanceof DailyShowFragment || fragmentManager.findFragmentById(R.id.frame_layout) instanceof SquareFragment || fragmentManager.findFragmentById(R.id.frame_layout) instanceof MineFragment) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * remove between  fragmen
      */
-    public static void removeBetweenFragment() {
-
+    public static void removeBetweenFragment(Fragment fragment) {
+        String tagNames = fragment.getClass().getName();
+        if (tags.contains(tagNames)) {
+            int index = tags.indexOf(tagNames);
+            for (int i = index; i < tags.size(); i++) {
+                Fragment fragmentDelete = fm.findFragmentByTag(tags.get(i));
+                removeFragment(fragmentDelete);
+            }
+            addFragment(fm, fragment);
+        } else {
+            throw new RuntimeException("Fragment exist");
+        }
     }
 
     /**
@@ -86,6 +106,9 @@ public class FragmentUtil {
         if (fragment != null) {
 //            ft.setCustomAnimations(R.anim.fragment_slide_right_enter, R.anim.fragment_slide_right_exit, R.anim.fragment_slide_left_enter,
 //                    R.anim.fragment_slide_left_exit);//动画
+            int index = tags.indexOf(fragment.getClass().getName());
+            tags.remove(index);
+            tags.add(fragment.getClass().getName());
             ft.show(fragment);
             ft.commit();
         }
