@@ -75,6 +75,11 @@ public class DailyEditFragment extends BaseFragment implements ActivityResultLis
     private List<String> pathsSum = new ArrayList<>();
 
     @Override
+    protected void lazyLoad() {
+
+    }
+
+    @Override
     public void init() {
         DailyComponent build = DaggerDailyComponent.builder().dailyModule(new DailyModule()).build();
         build.inject(this);

@@ -27,6 +27,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public abstract class BaseFragment extends Fragment implements EasyPermissions.PermissionCallbacks {
     public BaseActivity baseActivity;
+    protected boolean isVisible;
 
     @Override
     public void onAttach(Activity activity) {
@@ -35,14 +36,38 @@ public abstract class BaseFragment extends Fragment implements EasyPermissions.P
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        isPrepared = true;
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (getUserVisibleHint()) {
+            setUserVisibleHint(true);
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+    public boolean isPrepared;
+    public boolean isFirst = true;
+    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
+        if (getUserVisibleHint()) {
+            if (!isPrepared || !isFirst) {
+                return;
+            }
+            lazyLoad();
+            isFirst = false;
+        } else {
+        }
     }
+    protected abstract void lazyLoad();
 
     @Nullable
     @Override

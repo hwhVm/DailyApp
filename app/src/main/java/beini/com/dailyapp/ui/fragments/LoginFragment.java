@@ -46,6 +46,12 @@ public class LoginFragment extends BaseFragment implements GlobalApplicationList
     @Inject
     UserPresenter userPresenter;
 
+
+    @Override
+    protected void lazyLoad() {
+
+    }
+
     @Override
     public void init() {
         et_email = (GlobalEditText) text_input_layout_email.getEditText();

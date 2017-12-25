@@ -14,6 +14,11 @@ public class SquareFragment extends BaseFragment {
 
 
     @Override
+    protected void lazyLoad() {
+
+    }
+
+    @Override
     public void init() {
 
     }

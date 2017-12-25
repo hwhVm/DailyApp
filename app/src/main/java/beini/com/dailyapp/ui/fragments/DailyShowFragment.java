@@ -39,6 +39,11 @@ public class DailyShowFragment extends BaseFragment implements DailyShowListener
     DailyPresenter dailyPresenter;
 
     @Override
+    protected void lazyLoad() {
+
+    }
+
+    @Override
     public void init() {
         DailyComponent build = DaggerDailyComponent.builder().dailyModule(new DailyModule()).build();
         build.inject(this);

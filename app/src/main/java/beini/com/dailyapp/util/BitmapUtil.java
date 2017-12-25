@@ -152,4 +152,18 @@ public class BitmapUtil {
         file.delete();
     }
 
+    public byte[] convertBitempToByteArray(Bitmap bitmap) {
+        if ((bitmap != null && bitmap.isRecycled())) {
+            return null;
+        }
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        byte[] result = outputStream.toByteArray();
+        try {
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 }

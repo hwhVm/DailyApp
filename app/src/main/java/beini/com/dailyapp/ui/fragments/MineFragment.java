@@ -18,6 +18,11 @@ public class MineFragment extends BaseFragment {
 
 
     @Override
+    protected void lazyLoad() {
+
+    }
+
+    @Override
     public void init() {
 
     }
