@@ -57,7 +57,7 @@ public class DailyShowFragment extends BaseFragment implements DailyShowListener
         baseActivity.setNavigationVisibility(View.VISIBLE);
         baseActivity.setBackVisibility(View.GONE);
         baseActivity.setAddImageDrawable(getResources().getDrawable(R.mipmap.icon_addx));
-        baseActivity.setAddOnClickListener(v -> RouteService.getInstance().setArgs(null).jumpToDailyEdit(baseActivity));
+        baseActivity.setAddOnClickListener(v -> RouteService.getInstance().setArgs(null).jumpToAnyWhere(RouteService.FRAGMENT_DAILYEDIT));
     }
 
     public DailyPageBean returnDailyPageBean() {
@@ -84,7 +84,7 @@ public class DailyShowFragment extends BaseFragment implements DailyShowListener
                 DailyBean dailyBean = dailyBeans.get(position);
                 Bundle bundle = new Bundle();
                 bundle.putParcelable(Constants.DAILY_EDIT_DATA, dailyBean);
-                RouteService.getInstance().setArgs(bundle).jumpToDailyEdit(baseActivity);
+                RouteService.getInstance().setArgs(bundle).jumpToAnyWhere(RouteService.FRAGMENT_DAILYEDIT);
             });
         } else {
             showToast(getString(R.string.load_faild));

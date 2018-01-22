@@ -17,14 +17,9 @@ import beini.com.dailyapp.R;
 import beini.com.dailyapp.bind.ContentView;
 import beini.com.dailyapp.bind.ViewInject;
 import beini.com.dailyapp.bind.ViewInjectorImpl;
-import beini.com.dailyapp.ui.fragments.BaseFragment;
-import beini.com.dailyapp.ui.fragments.DailyShowFragment;
-import beini.com.dailyapp.ui.fragments.MineFragment;
-import beini.com.dailyapp.ui.fragments.SquareFragment;
 import beini.com.dailyapp.util.ActivityResultListener;
 import beini.com.dailyapp.util.FragmentUtil;
 import beini.com.dailyapp.util.KeyBackListener;
-import beini.com.dailyapp.util.ObjectUtil;
 
 @ContentView(R.layout.activity_base)
 public abstract class BaseActivity extends AppCompatActivity {
@@ -59,13 +54,13 @@ public abstract class BaseActivity extends AppCompatActivity {
             = item -> {
         switch (item.getItemId()) {
             case R.id.navigation_home:
-                replaceFragment(DailyShowFragment.class, null);
+//                replaceFragment(DailyShowFragment.class, null);
                 return true;
             case R.id.navigation_dashboard:
-                replaceFragment(SquareFragment.class, null);
+//                replaceFragment(SquareFragment.class, null);
                 return true;
             case R.id.navigation_notifications:
-                replaceFragment(MineFragment.class, null);
+//                replaceFragment(MineFragment.class, null);
                 return true;
         }
         return false;
@@ -73,16 +68,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public abstract void init();
 
-    //页面操作
-    public void replaceFragment(Class<?> fragment, Bundle args) {
-        Fragment currentFragment = customerFragmentManager.findFragmentByTag(fragment.getName());
-        if (currentFragment != null) {
-            FragmentUtil.showFragment(currentFragment);
-        } else {
-            BaseFragment baseFragment = (BaseFragment) ObjectUtil.createInstance(fragment);
-            baseFragment.setArguments(args);
-            FragmentUtil.addFragment(customerFragmentManager, baseFragment);
-        }
+    public void replaceFragment(Class fragment, Bundle args, String tag) {
+        Fragment fragment1 = FragmentUtil.addFragment(customerFragmentManager, fragment, tag);
+        fragment1.setArguments(args);
     }
 
     public void remove(Class<?> fragment) {

@@ -14,33 +14,40 @@ import beini.com.dailyapp.ui.fragments.RegisterFragment;
 
 public class RouteService {
     private static final RouteService ourInstance = new RouteService();
+    private BaseActivity baseActivity;
+    private Bundle args;
 
     public static RouteService getInstance() {
         return ourInstance;
     }
 
-    private Bundle args;
-
     private RouteService() {
     }
 
-    public void jumpToLogin(BaseActivity baseActivity) {
-        baseActivity.replaceFragment(LoginFragment.class,null);
+    public final static String FRAGMENT_LOGIN = "FRAGMENT_LOGIN";
+    public final static String FRAGMENT_DAILYEDIT = "FRAGMENT_DAILYEDIT";
+    public final static String FRAGMENT_DAILYSHOW = "FRAGMENT_DAILYSHOW";
+    public final static String FRAGMENT_REGISTER = "FRAGMENT_REGISTER";
+
+    public void jumpToAnyWhere(String tag) {
+        switch (tag) {
+            case FRAGMENT_LOGIN:
+                baseActivity.replaceFragment(LoginFragment.class, getArgs(),tag);
+                break;
+            case FRAGMENT_DAILYEDIT:
+                baseActivity.replaceFragment(DailyEditFragment.class, getArgs(),tag);
+                break;
+            case FRAGMENT_DAILYSHOW:
+                baseActivity.remove(LoginFragment.class);
+                baseActivity.replaceFragment(DailyShowFragment.class, getArgs(),tag);
+                break;
+            case FRAGMENT_REGISTER:
+                baseActivity.replaceFragment(RegisterFragment.class, getArgs(),tag);
+                break;
+        }
+
     }
 
-    public void jumpToDailyEdit(BaseActivity baseActivity) {
-        baseActivity.replaceFragment(DailyEditFragment.class, getArgs());
-    }
-
-
-    public void jumpToDailyShow(BaseActivity baseActivity) {
-        baseActivity.remove(LoginFragment.class);
-        baseActivity.replaceFragment(DailyShowFragment.class,null);
-    }
-
-    public void jumpToRegister(BaseActivity baseActivity) {
-        baseActivity.replaceFragment(RegisterFragment.class,null);
-    }
 
     /**
      * get set
@@ -54,4 +61,7 @@ public class RouteService {
         return this;
     }
 
+    public void setBaseActivity(BaseActivity baseActivity) {
+        this.baseActivity = baseActivity;
+    }
 }

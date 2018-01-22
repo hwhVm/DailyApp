@@ -48,6 +48,31 @@ public class FragmentUtil {
         }
     }
 
+    public static Fragment addFragment(FragmentManager fragmentManager, Class fragment, String tag) {
+        if (fragmentManager != null) {
+            if (fm == null) {
+                fm = fragmentManager;
+            }
+            hideAllFragment();
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            //查找是否存在Fragment
+            Fragment currentFragment = fragmentManager.findFragmentByTag(tag);
+
+            if (currentFragment == null) {//创建
+                currentFragment = (Fragment) ObjectUtil.createInstance(fragment);
+                ft.add(id, currentFragment, tag);
+                tags.add(tag);
+            } else {
+                ft.show(currentFragment);
+            }
+            ft.commit();
+
+            return currentFragment;
+        }
+        return null;
+    }
+
+
     private static long mLastKeyDown = 0;
 
     public static void removePreFragment() {

@@ -6,11 +6,10 @@ import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.view.View;
-
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.R;
 import beini.com.dailyapp.bean.UserBean;
@@ -24,6 +23,7 @@ import beini.com.dailyapp.ui.inter.GlobalApplicationListener;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
 import beini.com.dailyapp.ui.route.RouteService;
+import beini.com.dailyapp.ui.view.GlobalButton;
 import beini.com.dailyapp.ui.view.GlobalEditText;
 import beini.com.dailyapp.util.BLog;
 import io.objectbox.Box;
@@ -42,10 +42,11 @@ public class LoginFragment extends BaseFragment implements GlobalApplicationList
     TextInputLayout text_input_layout_email;
     @ViewInject(R.id.text_input_layout_password)
     TextInputLayout text_input_layout_password;
-
+    @ViewInject(R.id.btn_login)
+    GlobalButton btn_login;
     @Inject
     UserPresenter userPresenter;
-
+    private Animation shake;
 
     @Override
     protected void lazyLoad() {
@@ -67,7 +68,11 @@ public class LoginFragment extends BaseFragment implements GlobalApplicationList
                 login();
             }
         }
+        //按钮抖动
+        shake = AnimationUtils.loadAnimation(
+                getActivity(), R.anim.shakelayout);
     }
+
 
     @Override
     protected void hiddenChanged(boolean hidden) {
@@ -80,10 +85,11 @@ public class LoginFragment extends BaseFragment implements GlobalApplicationList
     private void mEvent(View view) {
         switch (view.getId()) {
             case R.id.btn_login://进行权限检查
+                if (shake != null) btn_login.startAnimation(shake);
                 strorageTask();
                 break;
             case R.id.text_register:
-                RouteService.getInstance().jumpToRegister(baseActivity);
+                RouteService.getInstance().jumpToAnyWhere(RouteService.FRAGMENT_REGISTER);
                 break;
         }
     }
@@ -130,7 +136,7 @@ public class LoginFragment extends BaseFragment implements GlobalApplicationList
     public void onResult(boolean aBoolen) {
         if (aBoolen) {
             showToast(getString(R.string.login_success));
-            RouteService.getInstance().jumpToDailyShow(baseActivity);
+            RouteService.getInstance().jumpToAnyWhere(RouteService.FRAGMENT_DAILYSHOW);
         } else {
             showToast(getString(R.string.login_faild));
         }

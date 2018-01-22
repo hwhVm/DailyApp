@@ -6,6 +6,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void init() {
-        RouteService.getInstance().jumpToLogin(this);
+        RouteService.getInstance().setBaseActivity(this);
+        RouteService.getInstance().jumpToAnyWhere(RouteService.FRAGMENT_LOGIN);
     }
 }
