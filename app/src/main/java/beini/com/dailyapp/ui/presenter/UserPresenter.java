@@ -4,7 +4,7 @@ import beini.com.dailyapp.bean.UserBean;
 import beini.com.dailyapp.constant.NetConstants;
 import beini.com.dailyapp.net.response.BaseResponseJson;
 import beini.com.dailyapp.net.response.LoginResponse;
-import beini.com.dailyapp.ui.inter.GlobalApplicationListener;
+import beini.com.dailyapp.ui.inter.ResultListener;
 import beini.com.dailyapp.util.GsonUtil;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
@@ -14,29 +14,29 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class UserPresenter extends BasePresenter {
 
-    public void registerUser(UserBean userBean, final GlobalApplicationListener globalApplicationListener) {
+    public void registerUser(UserBean userBean, final ResultListener<Boolean> listener) {
         requestModel.sendRequest(NetConstants.URL_REGISTER_USER, userBean, AndroidSchedulers.mainThread(), responseBody -> {
                     BaseResponseJson baseResponseJson = (BaseResponseJson) GsonUtil.getGsonUtil().fromJson(responseBody.string(), BaseResponseJson.class);
                     if (baseResponseJson.getReturnCode() == NetConstants.IS_SUCCESS) {
-                        globalApplicationListener.onResult(true);
+                        listener.onSuccessd(true);
                     } else {
-                        globalApplicationListener.onResult(false);
+                        listener.onFailed();
                     }
-                }, throwable -> globalApplicationListener.onResult(false)
+                }, throwable -> listener.onFailed()
         );
     }
 
-    public void loginUser(UserBean userBean, final GlobalApplicationListener loginListener) {
+    public void loginUser(UserBean userBean, final ResultListener<Boolean> loginListener) {
         requestModel.sendRequest(NetConstants.URL_LOGIN_USER, userBean, AndroidSchedulers.mainThread(), responseBody -> {
             LoginResponse baseResponseJson = (LoginResponse) GsonUtil.getGsonUtil().fromJson(responseBody.string(), LoginResponse.class);
             if (baseResponseJson.getReturnCode() == NetConstants.IS_SUCCESS) {
-                loginListener.onResult(true);
+                loginListener.onSuccessd(true);
                 UserBean userBeanFromNet = baseResponseJson.getUserBean();
                 storageModel.saveUserBeanToDb(userBeanFromNet);
             } else {
-                loginListener.onResult(false);
+                loginListener.onFailed();
             }
-        }, throwable -> loginListener.onResult(false));
+        }, throwable -> loginListener.onFailed());
 
     }
 

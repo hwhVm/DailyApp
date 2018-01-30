@@ -35,7 +35,6 @@ import beini.com.dailyapp.constant.NetConstants;
 import beini.com.dailyapp.net.response.FileResponse;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
-import beini.com.dailyapp.ui.inter.GlobalApplicationListener;
 import beini.com.dailyapp.ui.inter.UploadListener;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.DailyPresenter;
@@ -47,7 +46,6 @@ import beini.com.dailyapp.util.GifSizeFilter;
 import beini.com.dailyapp.util.MD5Util;
 import beini.com.dailyapp.util.StringUtil;
 import io.objectbox.Box;
-
 import static android.app.Activity.RESULT_OK;
 
 
@@ -55,7 +53,7 @@ import static android.app.Activity.RESULT_OK;
  * Create by beini 2017/10/19
  */
 @ContentView(R.layout.fragment_daily_edit)
-public class DailyEditFragment extends BaseFragment implements ActivityResultListener, GlobalApplicationListener, UploadListener {
+public class DailyEditFragment extends BaseFragment implements ActivityResultListener, UploadListener {
     @Inject
     DailyPresenter dailyPresenter;
     @Inject
@@ -188,18 +186,19 @@ public class DailyEditFragment extends BaseFragment implements ActivityResultLis
     }
 
     @Override
-    public void onResult(boolean aBoolen) {
-        if (aBoolen) {
-            showToast(getString(R.string.daily_add_successed));
-        } else {
-            showToast(getString(R.string.daily_add_failed));
-        }
-    }
-
-    @Override
     public void onResult(FileResponse fileResponse) {
         DailyBean dailyBean = returnDailyBean();
         dailyBean.setPicUrl(fileResponse.getFileId());
         dailyPresenter.insertDaily(dailyBean, this);
+    }
+
+    @Override
+    public void onSuccessd(Boolean aBoolean) {
+        showToast(getString(R.string.daily_add_successed));
+    }
+
+    @Override
+    public void onFailed() {
+        showToast(getString(R.string.daily_add_failed));
     }
 }

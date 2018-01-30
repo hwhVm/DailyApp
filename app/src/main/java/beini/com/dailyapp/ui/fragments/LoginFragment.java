@@ -8,8 +8,11 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+
 import java.util.List;
+
 import javax.inject.Inject;
+
 import beini.com.dailyapp.GlobalApplication;
 import beini.com.dailyapp.R;
 import beini.com.dailyapp.bean.UserBean;
@@ -17,9 +20,9 @@ import beini.com.dailyapp.bind.ContentView;
 import beini.com.dailyapp.bind.Event;
 import beini.com.dailyapp.bind.ViewInject;
 import beini.com.dailyapp.constant.Constants;
+import beini.com.dailyapp.ui.inter.ResultListener;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
-import beini.com.dailyapp.ui.inter.GlobalApplicationListener;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
 import beini.com.dailyapp.ui.route.RouteService;
@@ -35,7 +38,7 @@ import pub.devrel.easypermissions.EasyPermissions;
  * create by beini 2017/11/4
  */
 @ContentView(R.layout.fragment_login)
-public class LoginFragment extends BaseFragment implements GlobalApplicationListener {
+public class LoginFragment extends BaseFragment implements ResultListener<Boolean> {
     GlobalEditText et_email;
     GlobalEditText et_password;
     @ViewInject(R.id.text_input_layout_email)
@@ -132,17 +135,6 @@ public class LoginFragment extends BaseFragment implements GlobalApplicationList
         return userBean;
     }
 
-    @Override
-    public void onResult(boolean aBoolen) {
-        if (aBoolen) {
-            showToast(getString(R.string.login_success));
-            RouteService.getInstance().jumpToAnyWhere(RouteService.FRAGMENT_DAILYSHOW);
-        } else {
-            showToast(getString(R.string.login_faild));
-        }
-        cancelLoading();
-    }
-
     private boolean hasExternalStoragePermission() {
         return EasyPermissions.hasPermissions(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
     }
@@ -160,5 +152,16 @@ public class LoginFragment extends BaseFragment implements GlobalApplicationList
         }
     }
 
+    @Override
+    public void onSuccessd(Boolean aBoolean) {
+        showToast(getString(R.string.login_success));
+        RouteService.getInstance().jumpToAnyWhere(RouteService.FRAGMENT_DAILYSHOW);
+        cancelLoading();
+    }
 
+    @Override
+    public void onFailed() {
+        showToast(getString(R.string.login_faild));
+        cancelLoading();
+    }
 }

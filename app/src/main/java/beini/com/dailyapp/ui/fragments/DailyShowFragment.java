@@ -22,7 +22,7 @@ import beini.com.dailyapp.bind.ViewInject;
 import beini.com.dailyapp.constant.Constants;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
-import beini.com.dailyapp.ui.inter.DailyShowListener;
+import beini.com.dailyapp.ui.inter.ResultListener;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.DailyPresenter;
 import beini.com.dailyapp.ui.route.RouteService;
@@ -32,7 +32,7 @@ import io.objectbox.Box;
  * Create by beini  2017/11/6
  */
 @ContentView(R.layout.fragment_daily_show)
-public class DailyShowFragment extends BaseFragment implements DailyShowListener {
+public class DailyShowFragment extends BaseFragment implements ResultListener<List<DailyBean>> {
     @ViewInject(R.id.recycle_daily_list)
     RecyclerView recycle_daily_list;
     @Inject
@@ -72,22 +72,24 @@ public class DailyShowFragment extends BaseFragment implements DailyShowListener
         return dailyPageBean;
     }
 
+
     @Override
-    public void onResult(boolean aBoolean, List<DailyBean> dailyBeans) {
-        if (aBoolean) {
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-            linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-            final DailyAdapter dailyAdapter = new DailyAdapter(new BaseBean<>(R.layout.item_daily, dailyBeans, true));
-            recycle_daily_list.setLayoutManager(linearLayoutManager);
-            recycle_daily_list.setAdapter(dailyAdapter);
-            dailyAdapter.setItemClick((view, position) -> {
-                DailyBean dailyBean = dailyBeans.get(position);
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(Constants.DAILY_EDIT_DATA, dailyBean);
-                RouteService.getInstance().setArgs(bundle).jumpToAnyWhere(RouteService.FRAGMENT_DAILYEDIT);
-            });
-        } else {
-            showToast(getString(R.string.load_faild));
-        }
+    public void onSuccessd(List<DailyBean> dailyBeans) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        final DailyAdapter dailyAdapter = new DailyAdapter(new BaseBean<>(R.layout.item_daily, dailyBeans, true));
+        recycle_daily_list.setLayoutManager(linearLayoutManager);
+        recycle_daily_list.setAdapter(dailyAdapter);
+        dailyAdapter.setItemClick((view, position) -> {
+            DailyBean dailyBean = dailyBeans.get(position);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(Constants.DAILY_EDIT_DATA, dailyBean);
+            RouteService.getInstance().setArgs(bundle).jumpToAnyWhere(RouteService.FRAGMENT_DAILYEDIT);
+        });
+    }
+
+    @Override
+    public void onFailed() {
+        showToast(getString(R.string.load_faild));
     }
 }

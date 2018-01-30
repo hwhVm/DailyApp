@@ -14,7 +14,7 @@ import beini.com.dailyapp.bind.Event;
 import beini.com.dailyapp.bind.ViewInject;
 import beini.com.dailyapp.ui.component.DaggerDailyComponent;
 import beini.com.dailyapp.ui.component.DailyComponent;
-import beini.com.dailyapp.ui.inter.GlobalApplicationListener;
+import beini.com.dailyapp.ui.inter.ResultListener;
 import beini.com.dailyapp.ui.module.DailyModule;
 import beini.com.dailyapp.ui.presenter.UserPresenter;
 import beini.com.dailyapp.ui.view.GlobalEditText;
@@ -23,7 +23,7 @@ import beini.com.dailyapp.ui.view.GlobalEditText;
  * Create by beini 2017/10/25
  */
 @ContentView(R.layout.fragment_register)
-public class RegisterFragment extends BaseFragment implements GlobalApplicationListener {
+public class RegisterFragment extends BaseFragment implements ResultListener<Boolean> {
     @Inject
     UserPresenter userPresenter;
     @ViewInject(R.id.et_re_email)
@@ -105,12 +105,13 @@ public class RegisterFragment extends BaseFragment implements GlobalApplicationL
     }
 
     @Override
-    public void onResult(boolean aBoolen) {
-        if (aBoolen) {
-            showToast(getString(R.string.register_success));
-            baseActivity.back();
-        } else {
-            showToast(getString(R.string.register_failed));
-        }
+    public void onSuccessd(Boolean aBoolean) {
+        showToast(getString(R.string.register_success));
+        baseActivity.back();
+    }
+
+    @Override
+    public void onFailed() {
+        showToast(getString(R.string.register_failed));
     }
 }
